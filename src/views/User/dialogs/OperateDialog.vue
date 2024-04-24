@@ -12,7 +12,7 @@
           <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth">
+      <!-- <el-form-item label="性别" :label-width="formLabelWidth">
         <el-radio-group v-model="form.profile.gender">
           <el-radio label="男" />
           <el-radio label="女" />
@@ -25,7 +25,7 @@
           type="textarea"
           placeholder="请输入地址"
         />
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <template #footer>
       <div class="dialog-footer">
