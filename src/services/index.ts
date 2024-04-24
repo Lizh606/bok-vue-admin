@@ -17,7 +17,7 @@ export interface User {
   username: string
   password: string
   roles?: Role[]
-  profile: Profile
+  profile?: Profile
 }
 export const login = async (data: User) => {
   return await post(`${BASE_URL}auth/signIn`, data)
