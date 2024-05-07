@@ -1,5 +1,5 @@
 <template>
-  <span>123</span>
+  <span>Welcome to Manager!</span>
 </template>
 
 <script setup lang="ts">

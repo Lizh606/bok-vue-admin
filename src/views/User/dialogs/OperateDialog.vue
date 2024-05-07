@@ -29,8 +29,8 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogShow = false">Cancel</el-button>
-        <el-button type="primary" @click="handleAdd"> Confirm </el-button>
+        <el-button @click="dialogShow = false">取消</el-button>
+        <el-button type="primary" @click="handleAdd"> 确认发布 </el-button>
       </div>
     </template>
   </el-dialog>

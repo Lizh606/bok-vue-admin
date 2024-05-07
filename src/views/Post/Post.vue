@@ -4,13 +4,13 @@
       <el-button type="primary" round @click="openDialog('add')">新增</el-button>
     </div>
     <div class="tw-flex-1 tw-min-h-0" ref="tableRef">
-      <el-table :data="tableData" stripe border :height="tableHeight">
-        <el-table-column prop="id" label="id" width="80" align="center" />
-        <el-table-column prop="title" label="文章标题" width="180" align="center" />
+      <el-table :data="tableData" stripe :height="tableHeight">
+        <el-table-column prop="id" label="序号" width="80" align="center" />
+        <el-table-column prop="title" label="文章标题" width="300" align="center" />
         <el-table-column prop="sort" label="分类" width="220" align="center"> </el-table-column>
         <el-table-column prop="tag" label="标签" width="180" align="center" />
         <el-table-column prop="date" label="更新日期" width="280" align="center" />
-        <el-table-column label="操作" align="center">
+        <el-table-column label="操作" fixed="right" align="center" width="200">
           <template #default="scope">
             <el-button size="small" @click="openDialog('edit', scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="openDialog('delete', scope.row)"
