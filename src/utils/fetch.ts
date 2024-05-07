@@ -1,4 +1,4 @@
-import { useAPPStore } from '@/stores/app'
+import { useAppStore } from '@/stores/app'
 
 const TOKEN = 'access_token'
 interface RequestOptions {
@@ -11,7 +11,7 @@ export const request = async (
   url: string,
   options: RequestOptions = { method: 'GET' }
 ): Promise<any> => {
-  const appStore = useAPPStore()
+  const appStore = useAppStore()
   try {
     const headers = options.headers || {
       'Content-Type': 'application/json'

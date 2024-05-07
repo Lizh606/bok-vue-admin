@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import router from '@/router'
 import { login } from '@/services'
+import { useAppStore } from '@/stores/app'
 import { ref } from 'vue'
 const loginForm = ref({
   username: '',
@@ -35,6 +36,7 @@ const handleLogin = async () => {
       try {
         // 执行登录逻辑，例如发送登录请求
         const data = await login(loginForm.value)
+        useAppStore().$patch({ userInfo: loginForm.value })
         console.log('登录成功')
         router.push('/')
       } catch (error) {

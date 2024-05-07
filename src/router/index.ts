@@ -1,4 +1,4 @@
-import { useAPPStore } from '@/stores/app'
+import { useAppStore } from '@/stores/app'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -52,8 +52,7 @@ const router = createRouter({
   ]
 })
 router.beforeEach((to, from) => {
-  const store = useAPPStore()
-  console.log(store.token)
+  const store = useAppStore()
   if (!store.token && to.name !== 'login') {
     router.push({ name: 'login' })
   }

@@ -1,12 +1,13 @@
+import type { User } from '@/services'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
-export const useAPPStore = defineStore(
+type UserInfo = Pick<User, 'username'>
+export const useAppStore = defineStore(
   'app',
   () => {
     const token = ref('')
-
-    return { token }
+    const userInfo = ref<UserInfo>({ username: '' })
+    return { token, userInfo }
   },
   { persist: true }
 )

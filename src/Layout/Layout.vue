@@ -1,8 +1,6 @@
 <template>
   <div class="tw-h-full tw-flex">
-    <div class="tw-w-1/5">
-      <Menu />
-    </div>
+    <Menu />
     <div class="tw-flex tw-flex-col tw-flex-1 tw-min-w-0">
       <Header />
       <RouterView class="tw-flex-1 tw-min-h-0 tw-bg-gray-100 tw-p-4" />
