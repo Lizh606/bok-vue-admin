@@ -39,7 +39,15 @@ const router = createRouter({
           name: 'article',
           component: () => import('@/views/Post/Post.vue'),
           meta: {
-            title: '文章管理'
+            title: '博文管理'
+          }
+        },
+        {
+          path: '/article/edit',
+          name: 'edit',
+          component: () => import('@/views/Post/Edit.vue'),
+          meta: {
+            title: '博文编辑'
           }
         }
       ]
@@ -53,6 +61,7 @@ const router = createRouter({
 })
 router.beforeEach((to, from) => {
   const store = useAppStore()
+
   if (!store.token && to.name !== 'login') {
     router.push({ name: 'login' })
   }

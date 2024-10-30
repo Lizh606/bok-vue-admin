@@ -1,19 +1,37 @@
 <template>
   <div class="tw-flex tw-flex-col tw-gap-4">
     <div>
-      <el-button type="primary" round @click="openDialog('add')">新增</el-button>
+      <el-button type="primary" round @click="openDialog('add')"
+        >新增</el-button
+      >
     </div>
-    <div class="tw-flex-1 tw-min-h-0" ref="tableRef">
+    <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
       <el-table :data="tableData" stripe :height="tableHeight">
         <el-table-column prop="id" label="序号" width="80" align="center" />
-        <el-table-column prop="title" label="文章标题" width="300" align="center" />
-        <el-table-column prop="sort" label="分类" width="220" align="center"> </el-table-column>
+        <el-table-column
+          prop="title"
+          label="文章标题"
+          width="300"
+          align="center"
+        />
+        <el-table-column prop="sort" label="分类" width="220" align="center">
+        </el-table-column>
         <el-table-column prop="tag" label="标签" width="180" align="center" />
-        <el-table-column prop="date" label="更新日期" width="280" align="center" />
+        <el-table-column
+          prop="date"
+          label="更新日期"
+          width="280"
+          align="center"
+        />
         <el-table-column label="操作" fixed="right" align="center" width="200">
           <template #default="scope">
-            <el-button size="small" @click="openDialog('edit', scope.row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="openDialog('delete', scope.row)"
+            <el-button size="small" @click="openDialog('edit', scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              size="small"
+              type="danger"
+              @click="openDialog('delete', scope.row)"
               >删除</el-button
             >
           </template>
@@ -45,51 +63,52 @@
 </template>
 
 <script setup lang="ts">
-import useTablePagination from '@/hooks/useTablePagination'
-import type { Post } from '@/services/posts'
-import { getPostList } from '@/services/posts'
-import { onMounted, ref } from 'vue'
-import { POST_DIALOG_TITLE } from './common'
-import DeleteDialog from './dialogs/DeleteDialog.vue'
-import OperateDialog from './dialogs/OperateDialog.vue'
+import useTablePagination from "@/hooks/useTablePagination";
+import type { Post } from "@/services/posts";
+import { getPostList } from "@/services/posts";
+import { onMounted, ref } from "vue";
+import { POST_DIALOG_TITLE } from "./common";
+import DeleteDialog from "./dialogs/DeleteDialog.vue";
+import OperateDialog from "./dialogs/OperateDialog.vue";
 // table元素
-const tableRef = ref()
+const tableRef = ref();
 // table高度
-const tableHeight = ref()
+const tableHeight = ref();
 
-const { tableData, pageRef, pageSizeRef, getTableData, totalRef } = useTablePagination<Post>(
-  getPostList,
-  { queryParams: { page: 1, size: 10 }, immediate: true }
-)
-const addDialog = ref(false)
-const deleteDialog = ref(false)
-const dialogTitle = ref(POST_DIALOG_TITLE.ADD)
-const currentFormData = ref()
+const { tableData, pageRef, pageSizeRef, getTableData, totalRef } =
+  useTablePagination<Post>(getPostList, {
+    queryParams: { page: 1, size: 10 },
+    immediate: true,
+  });
+const addDialog = ref(false);
+const deleteDialog = ref(false);
+const dialogTitle = ref(POST_DIALOG_TITLE.ADD);
+const currentFormData = ref();
 const openDialog = (type: string, data?: any) => {
-  currentFormData.value = data
+  currentFormData.value = data;
   switch (type) {
-    case 'add':
-      dialogTitle.value = POST_DIALOG_TITLE.ADD
-      addDialog.value = true
-      break
-    case 'edit':
-      dialogTitle.value = POST_DIALOG_TITLE.EDIT
-      addDialog.value = true
-      break
-    case 'delete':
-      deleteDialog.value = true
-      break
+    case "add":
+      dialogTitle.value = POST_DIALOG_TITLE.ADD;
+      addDialog.value = true;
+      break;
+    case "edit":
+      dialogTitle.value = POST_DIALOG_TITLE.EDIT;
+      addDialog.value = true;
+      break;
+    case "delete":
+      deleteDialog.value = true;
+      break;
     default:
-      break
+      break;
   }
-}
+};
 
 onMounted(() => {
-  tableHeight.value = tableRef.value.offsetHeight
+  tableHeight.value = tableRef.value.offsetHeight;
   window.onresize = () => {
-    tableHeight.value = tableRef.value.offsetHeight
-  }
-})
+    tableHeight.value = tableRef.value.offsetHeight;
+  };
+});
 </script>
 
 <style lang="scss"></style>
