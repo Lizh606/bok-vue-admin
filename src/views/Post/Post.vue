@@ -1,59 +1,88 @@
 <template>
   <div class="tw-flex tw-flex-col tw-gap-4">
-    <div>
-      <el-button type="primary" round @click="openDialog('add')"
-        >新增</el-button
-      >
-    </div>
-    <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
-      <el-table :data="tableData" stripe :height="tableHeight">
-        <el-table-column prop="id" label="序号" width="80" align="center" />
-        <el-table-column
-          prop="title"
-          label="文章标题"
-          width="300"
-          align="center"
-        />
-        <el-table-column prop="sort" label="分类" width="220" align="center">
-        </el-table-column>
-        <el-table-column prop="tag" label="标签" width="180" align="center" />
-        <el-table-column
-          prop="date"
-          label="更新日期"
-          width="280"
-          align="center"
-        />
-        <el-table-column label="操作" fixed="right" align="center" width="200">
-          <template #default="scope">
-            <el-button size="small" @click="openDialog('edit', scope.row)"
-              >编辑</el-button
-            >
-            <el-button
-              size="small"
-              type="danger"
-              @click="openDialog('delete', scope.row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
+    <div class="tw-flex tw-items-center tw-justify-between">
+      <div class="tw-text-xl tw-font-bold">文章管理</div>
+      <el-button type="primary" @click="openDialog('add')">
+        <el-icon class="tw-mr-1"><Plus /></el-icon>新增文章
+      </el-button>
     </div>
 
-    <el-pagination
-      layout="prev, pager, next"
-      :total="totalRef"
-      class="tw-flex tw-justify-end"
-      v-model:page-size="pageSizeRef"
-      v-model:current-page="pageRef"
-      @update:current-page="getTableData"
-      @update:page-size="getTableData"
-    />
-    <OperateDialog
-      v-model:show="addDialog"
-      :title="dialogTitle"
-      :currentFormData="currentFormData"
-      @updateList="getTableData"
-    ></OperateDialog>
+    <el-card class="tw-min-h-0 tw-flex-1" shadow="never">
+      <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
+        <el-table
+          :data="tableData"
+          :height="tableHeight"
+          style="width: 100%"
+          :header-cell-style="{
+            background: '#f8f9fa',
+            color: '#495057',
+            fontWeight: '600'
+          }"
+        >
+          <el-table-column prop="id" label="序号" width="80" align="center" />
+          <el-table-column
+            prop="title"
+            label="文章标题"
+            min-width="300"
+            align="left"
+          />
+          <el-table-column prop="sort" label="分类" width="160" align="center">
+            <template #default="scope">
+              <el-tag type="success" effect="light" round>
+                {{ scope.row.sort }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="tag" label="标签" width="160" align="center">
+            <template #default="scope">
+              <el-tag type="warning" effect="light" round>
+                {{ scope.row.tag }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="date"
+            label="发布日期"
+            width="180"
+            align="center"
+          />
+          <el-table-column
+            label="操作"
+            fixed="right"
+            align="center"
+            width="180"
+          >
+            <template #default="scope">
+              <el-button
+                link
+                type="primary"
+                @click="openDialog('edit', scope.row)"
+                >编辑</el-button
+              >
+              <el-button
+                link
+                type="danger"
+                @click="openDialog('delete', scope.row)"
+                >删除</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div class="tw-mt-4 tw-flex tw-justify-end">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="totalRef"
+          :page-size="pageSizeRef"
+          v-model:current-page="pageRef"
+          @update:current-page="getTableData"
+          @update:page-size="getTableData"
+        />
+      </div>
+    </el-card>
+
     <DeleteDialog
       v-model:show="deleteDialog"
       :currentFormData="currentFormData"
@@ -63,52 +92,108 @@
 </template>
 
 <script setup lang="ts">
-import useTablePagination from "@/hooks/useTablePagination";
-import type { Post } from "@/services/posts";
-import { getPostList } from "@/services/posts";
-import { onMounted, ref } from "vue";
-import { POST_DIALOG_TITLE } from "./common";
-import DeleteDialog from "./dialogs/DeleteDialog.vue";
-import OperateDialog from "./dialogs/OperateDialog.vue";
-// table元素
-const tableRef = ref();
-// table高度
-const tableHeight = ref();
+  import useTablePagination from "@/hooks/useTablePagination"
+  import type { Post } from "@/services/posts"
+  import { getPostList } from "@/services/posts"
+  import { onMounted, ref } from "vue"
+  import DeleteDialog from "./dialogs/DeleteDialog.vue"
+  import { Plus } from "@element-plus/icons-vue"
+  import { useRouter } from "vue-router"
 
-const { tableData, pageRef, pageSizeRef, getTableData, totalRef } =
-  useTablePagination<Post>(getPostList, {
-    queryParams: { page: 1, size: 10 },
-    immediate: true,
-  });
-const addDialog = ref(false);
-const deleteDialog = ref(false);
-const dialogTitle = ref(POST_DIALOG_TITLE.ADD);
-const currentFormData = ref();
-const openDialog = (type: string, data?: any) => {
-  currentFormData.value = data;
-  switch (type) {
-    case "add":
-      dialogTitle.value = POST_DIALOG_TITLE.ADD;
-      addDialog.value = true;
-      break;
-    case "edit":
-      dialogTitle.value = POST_DIALOG_TITLE.EDIT;
-      addDialog.value = true;
-      break;
-    case "delete":
-      deleteDialog.value = true;
-      break;
-    default:
-      break;
+  // table元素
+  const tableRef = ref()
+  // table高度
+  const tableHeight = ref()
+
+  const { tableData, pageRef, pageSizeRef, getTableData, totalRef } =
+    useTablePagination<Post>(getPostList, {
+      queryParams: { page: 1, size: 15 },
+      immediate: true
+    })
+  const deleteDialog = ref(false)
+  const currentFormData = ref()
+  const router = useRouter()
+
+  const openDialog = (type: string, data?: any) => {
+    currentFormData.value = data
+    switch (type) {
+      case "add":
+        router.push("/article/edit")
+        break
+      case "edit":
+        router.push({
+          path: "/article/edit",
+          query: { id: data.id }
+        })
+        break
+      case "delete":
+        deleteDialog.value = true
+        break
+      default:
+        break
+    }
   }
-};
 
-onMounted(() => {
-  tableHeight.value = tableRef.value.offsetHeight;
-  window.onresize = () => {
-    tableHeight.value = tableRef.value.offsetHeight;
-  };
-});
+  onMounted(() => {
+    tableHeight.value = tableRef.value.offsetHeight
+    window.onresize = () => {
+      tableHeight.value = tableRef.value.offsetHeight
+    }
+  })
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+  :deep(.el-card) {
+    border: 1px solid #ebeef5;
+    background-color: #fff;
+    color: #303133;
+    transition: 0.3s;
+    padding: 16px;
+
+    .el-card__body {
+      padding: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .blog-btn {
+    background-color: #3b82f6;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 500;
+
+    &:hover {
+      background-color: #2563eb;
+    }
+  }
+
+  :deep(.el-table) {
+    border-radius: 8px;
+    overflow: hidden;
+
+    .el-table__header-wrapper {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .el-button--link {
+      font-weight: 500;
+      padding: 4px 8px;
+    }
+  }
+
+  :deep(.el-pagination) {
+    .el-pagination__sizes {
+      margin-right: 16px;
+    }
+
+    .el-pager li {
+      border-radius: 4px;
+
+      &.is-active {
+        background-color: #3b82f6;
+      }
+    }
+  }
+</style>
