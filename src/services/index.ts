@@ -1,4 +1,4 @@
-import { del, get, post } from '@/utils/fetch'
+import { del, get, post } from "@/utils/fetch"
 // export const BASE_URL = 'http://106.54.47.60:13000/'
 console.log(import.meta.env)
 
@@ -23,8 +23,13 @@ export const login = async (data: User) => {
   return await post(`${BASE_URL}auth/signIn`, data)
 }
 
-export const getUserListByPage = async (params: { page: number; size: number }) => {
-  return await get(`${BASE_URL}v1/user/page?page=${params.page}&size=${params.size}`)
+export const getUserListByPage = async (params: {
+  page: number
+  size: number
+}) => {
+  return await get(
+    `${BASE_URL}v1/user/page?page=${params.page}&size=${params.size}`
+  )
 }
 
 export const addUser = async (params: User) => {
@@ -40,4 +45,8 @@ export const deleteUser = async (id: number) => {
 }
 export const getRoleList = async () => {
   return await get(`${BASE_URL}roles`)
+}
+
+export const getUserInfo = async () => {
+  return await get(`${BASE_URL}/v1/user/userInfo`)
 }
