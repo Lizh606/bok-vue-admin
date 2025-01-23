@@ -1,6 +1,6 @@
 <template>
   <div
-    class="tw-flex tw-flex-col tw-gap-4 tw-bg-[#73AC9A] tw-py-4 tw-text-white"
+    class="tw-flex tw-flex-col tw-gap-4 tw-bg-[#2c3e50] tw-py-4 tw-text-white"
   >
     <!-- <el-radio-group v-model="isCollapse" class="tw-absolute tw-left-24">
       <el-radio-button :value="true">expand</el-radio-button>
@@ -21,27 +21,29 @@
       </el-icon>
     </div>
     <el-menu
-      active-text-color="#ffd04b"
-      background-color="#73AC9A"
-      class="tw-min-h-0 tw-w-[15vw] tw-flex-1"
+      active-text-color="#42b983"
+      background-color="#2c3e50"
+      class="tw-min-h-0 tw-w-[220px] tw-flex-1"
       :default-active="menuActive"
       :collapse="isCollapse"
       text-color="#fff"
-      router
+      @select="handleSelect"
     >
       <el-menu-item
         v-for="item in menuList"
         :key="item.value"
         :index="item.value"
       >
-        <el-icon><setting /></el-icon>
+        <el-icon>
+          <component :is="item.icon" />
+        </el-icon>
         <span>{{ item.name }}</span>
       </el-menu-item>
     </el-menu>
 
     <div class="tw-flex tw-items-center tw-gap-2 tw-px-4">
       <div
-        class="tw-h-8 tw-w-8 tw-overflow-hidden tw-rounded-full tw-border tw-border-solid tw-border-[#eee] tw-shadow-sm"
+        class="tw-flex tw-h-8 tw-w-8 tw-items-center tw-overflow-hidden tw-rounded-full tw-border tw-border-solid tw-border-[#eee] tw-shadow-sm"
       >
         <img
           src="@/assets/ava.jpg"
@@ -54,34 +56,52 @@
 </template>
 
 <script setup lang="ts">
-  import { useAppStore } from "@/stores/app";
-import { Expand, Setting, WindPower } from "@element-plus/icons-vue";
-import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
+  import router from "@/router"
+  import { useAppStore } from "@/stores/app"
+  import {
+    Expand,
+    WindPower,
+    Histogram,
+    Document,
+    User
+  } from "@element-plus/icons-vue"
+  import { computed, ref } from "vue"
+  import { useRoute } from "vue-router"
   const route = useRoute()
   const isCollapse = ref(false)
   const menuList = [
     {
-      name: "总览",
-      value: "/dashboard"
-    },
-    {
-      name: "用户管理",
-      value: "/user"
+      name: "仪表盘",
+      value: "dashboard",
+      icon: Histogram
     },
     {
       name: "博文管理",
-      value: "/article"
+      value: "article",
+      icon: Document
+    },
+    {
+      name: "用户管理",
+      value: "user",
+      icon: User
     }
+    // {
+    //   name: "系统设置",
+    //   value: "settings",
+    //   icon: "Platform"
+    // }
   ]
 
   const menuActive = computed(() => {
-    return route.name
+    return route.matched[1].name
   })
   const appStore = useAppStore()
   const userName = computed(() => {
     return appStore.userInfo.username
   })
+  const handleSelect = (index: string) => {
+    router.push({ name: index })
+  }
 </script>
 
 <style lang="scss">

@@ -1,18 +1,37 @@
 <template>
   <el-dialog v-model="dialogShow" :title="props.title" width="500">
     <el-form :model="form" :rules="rules" ref="formRef">
-      <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
+      <el-form-item
+        label="用户名"
+        :label-width="formLabelWidth"
+        prop="username"
+      >
         <el-input v-model="form.username" autocomplete="off" />
       </el-form-item>
       <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
-        <el-input v-model="form.password" type="password" placeholder="请输入密码" show-password />
+        <el-input
+          v-model="form.password"
+          type="password"
+          placeholder="请输入密码"
+          show-password
+        />
       </el-form-item>
-      <el-form-item label="角色" :label-width="formLabelWidth">
-        <el-select v-model="form.roles" multiple placeholder="请选择角色">
-          <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id" />
+      <el-form-item label="角色" :label-width="formLabelWidth" prop="roles">
+        <el-select
+          v-model="form.roles"
+          multiple
+          placeholder="请选择角色"
+          :loading="isRolesLoading"
+        >
+          <el-option
+            v-for="item in roleList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="性别" :label-width="formLabelWidth">
+      <el-form-item label="性别" :label-width="formLabelWidth">
         <el-radio-group v-model="form.profile.gender">
           <el-radio label="男" />
           <el-radio label="女" />
@@ -25,96 +44,145 @@
           type="textarea"
           placeholder="请输入地址"
         />
-      </el-form-item> -->
+      </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogShow = false">取消</el-button>
-        <el-button type="primary" @click="handleAdd"> 确认发布 </el-button>
+        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="primary" @click="handleSubmit" :loading="isSubmitting">
+          {{ props.title === USER_DIALOG_TITLE.ADD ? "确认添加" : "确认更新" }}
+        </el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import type { Profile, Role, User } from '@/services'
-import { addUser, getRoleList, updateUser } from '@/services'
-import { ElMessage } from 'element-plus'
-import { onMounted, ref, watch } from 'vue'
-import { USER_DIALOG_TITLE } from '../common'
-const dialogShow = defineModel('show', { required: true })
-const props = defineProps({
-  title: {
-    type: String,
-    default: '新建用户'
-  },
-  currentFormData: {
-    type: Object
-  }
-})
-const emit = defineEmits(['updateList'])
-const formLabelWidth = ref(80)
-const form = ref<User>({
-  username: '',
-  password: '',
-  profile: {
-    gender: '',
-    address: ''
-  } as Profile,
-  roles: []
-})
+  import type { Role, User } from "@/services"
+  import { addUser, getRoleList, updateUser } from "@/services"
+  import { ElMessage } from "element-plus"
+  import { onMounted, ref, watch } from "vue"
+  import { USER_DIALOG_TITLE } from "../common"
 
-watch(
-  () => props.currentFormData,
-  () => {
-    if (props.currentFormData) {
-      form.value = JSON.parse(JSON.stringify(props.currentFormData))
-      form.value.password = ''
-      if (!form.value.profile) {
-        form.value.profile = {
-          gender: '',
-          address: ''
-        } as Profile
-      }
-      const roleIds: number[] = []
-      if (form.value.roles) {
-        form.value.roles.forEach((i: Role) => {
-          roleIds.push(i.id)
-        })
-      }
-      form.value.roles = roleIds as any
+  interface FormData extends Omit<User, "roles"> {
+    roles: number[]
+    profile: {
+      gender: string
+      address: string
     }
-  },
-  {
-    immediate: true
   }
-)
-const roleList = ref<Role[]>([])
-const formRef = ref()
-onMounted(async () => {
-  roleList.value = await getRoleList()
-})
-const rules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
-}
-const handleAdd = async () => {
-  formRef.value.validate(async (valid: boolean) => {
-    if (valid) {
-      try {
-        if (props.title === USER_DIALOG_TITLE.ADD) {
-          await addUser(form.value)
-        } else {
-          await updateUser(form.value.id as number, form.value)
-        }
-        emit('updateList')
-        dialogShow.value = false
-      } catch (error) {
-        ElMessage.error('操作失败')
+
+  // Props 类型定义
+  interface Props {
+    title: string
+    currentFormData?: User
+  }
+
+  const dialogShow = defineModel("show", { required: true })
+  const props = defineProps<Props>()
+  const emit = defineEmits<{
+    updateList: []
+  }>()
+
+  // 状态管理
+  const formLabelWidth = ref(80)
+  const isRolesLoading = ref(false)
+  const isSubmitting = ref(false)
+  const roleList = ref<Role[]>([])
+  const formRef = ref()
+
+  // 表单初始值
+  const initialForm: FormData = {
+    username: "",
+    password: "",
+    profile: {
+      gender: "",
+      address: ""
+    },
+    roles: []
+  }
+
+  const form = ref<FormData>({ ...initialForm })
+
+  // 表单验证规则
+  const rules = {
+    username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+    password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+    roles: [{ required: true, message: "请选择角色", trigger: "change" }]
+  }
+
+  // 方法
+  const resetForm = () => {
+    form.value = { ...initialForm }
+    formRef.value?.resetFields()
+  }
+
+  const closeDialog = () => {
+    dialogShow.value = false
+    resetForm()
+  }
+
+  const handleSubmit = async () => {
+    if (!formRef.value) return
+
+    try {
+      const valid = await formRef.value.validate()
+      if (!valid) return
+
+      isSubmitting.value = true
+
+      if (props.title === USER_DIALOG_TITLE.ADD) {
+        await addUser(form.value as unknown as User)
+        ElMessage.success("添加用户成功")
+      } else {
+        await updateUser(form.value.id as number, form.value as unknown as User)
+        ElMessage.success("更新用户成功")
       }
+
+      emit("updateList")
+      closeDialog()
+    } catch (error) {
+      ElMessage.error(error instanceof Error ? error.message : "操作失败")
+    } finally {
+      isSubmitting.value = false
     }
+  }
+
+  // 加载角色列表
+  const loadRoleList = async () => {
+    try {
+      isRolesLoading.value = true
+      roleList.value = await getRoleList()
+    } catch (error) {
+      ElMessage.error("获取角色列表失败")
+    } finally {
+      isRolesLoading.value = false
+    }
+  }
+
+  // 监听表单数据变化
+  watch(
+    () => props.currentFormData,
+    (newData) => {
+      if (!newData) {
+        resetForm()
+        return
+      }
+
+      const roleIds = newData.roles?.map((role: Role) => role.id) || []
+      form.value = {
+        ...JSON.parse(JSON.stringify(newData)),
+        password: "",
+        roles: roleIds,
+        profile: newData.profile || { gender: "", address: "" }
+      }
+    },
+    { immediate: true }
+  )
+
+  onMounted(() => {
+    loadRoleList()
   })
-}
 </script>
 
 <style lang="scss"></style>

@@ -1,71 +1,105 @@
 <template>
   <div class="tw-flex tw-flex-col tw-gap-4">
-    <div>
-      <el-button type="primary" round @click="openDialog('add')"
-        >新增</el-button
-      >
-    </div>
-    <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
-      <el-table :data="tableData" stripe border :height="tableHeight">
-        <el-table-column prop="id" label="id" width="80" align="center" />
-        <el-table-column
-          prop="username"
-          label="用户名"
-          width="180"
-          align="center"
-        />
-        <el-table-column label="角色" width="220" align="center">
-          <template #default="scope">
-            <div class="tw-flex tw-w-full tw-items-center tw-justify-center">
-              <span>{{
-                scope.row.roles.map((i: Role) => i.name).join("、")
-              }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="gender"
-          label="性别"
-          width="180"
-          align="center"
-        />
-        <el-table-column prop="address" label="Address" />
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button size="small" @click="openDialog('edit', scope.row)"
-              >编辑</el-button
-            >
-            <el-button
-              size="small"
-              type="danger"
-              @click="openDialog('delete', scope.row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
+    <div class="tw-flex tw-items-center tw-justify-between">
+      <div class="tw-text-xl tw-font-bold">用户管理</div>
+      <el-button type="primary" @click="openDialog('add')">
+        <el-icon class="tw-mr-1"><Plus /></el-icon>新增用户
+      </el-button>
     </div>
 
-    <el-pagination
-      layout="prev, pager, next"
-      :total="totalRef"
-      class="tw-flex tw-justify-end"
-      v-model:page-size="pageSizeRef"
-      v-model:current-page="pageRef"
-      @update:current-page="getTableData"
-      @update:page-size="getTableData"
-    />
+    <el-card class="tw-min-h-0 tw-flex-1" shadow="never">
+      <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
+        <el-table :data="tableData" :height="tableHeight" style="width: 100%">
+          <el-table-column prop="id" label="ID" width="80" align="center" />
+          <el-table-column width="80" align="center">
+            <template #default="scope">
+              <div class="tw-h-8 tw-w-8 tw-overflow-hidden tw-rounded-full">
+                <img
+                  :src="scope.row.avatar || '/src/assets/ava.jpg'"
+                  class="tw-h-full tw-w-full tw-object-cover"
+                />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="username"
+            label="用户名"
+            width="150"
+            align="center"
+          />
+          <el-table-column label="角色" width="250" align="center">
+            <template #default="scope">
+              <el-tag
+                v-for="role in scope.row.roles"
+                :key="role.id"
+                class="tw-mx-1"
+                :type="role.name === 'admin' ? 'danger' : 'info'"
+              >
+                {{ role.name }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="gender"
+            label="性别"
+            width="100"
+            align="center"
+          />
+          <el-table-column prop="address" label="地址" />
+          <el-table-column label="状态" width="100" align="center">
+            <template #default="scope">
+              <el-switch
+                v-model="scope.row.status"
+                :active-value="1"
+                :inactive-value="0"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="180" align="center">
+            <template #default="scope">
+              <el-button
+                type="primary"
+                link
+                @click="openDialog('edit', scope.row)"
+              >
+                编辑
+              </el-button>
+              <el-button
+                type="danger"
+                link
+                @click="openDialog('delete', scope.row)"
+              >
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div class="tw-mt-4 tw-flex tw-justify-end">
+        <el-pagination
+          background
+          layout=" prev, pager, next"
+          :total="totalRef"
+          :page-size="pageSizeRef"
+          v-model:current-page="pageRef"
+          @update:current-page="getTableData"
+          @update:page-size="getTableData"
+        />
+      </div>
+    </el-card>
+
     <OperateDialog
       v-model:show="addDialog"
       :title="dialogTitle"
       :currentFormData="currentFormData"
       @updateList="getTableData"
-    ></OperateDialog>
+    />
     <DeleteDialog
       v-model:show="deleteDialog"
       :currentFormData="currentFormData"
       @updateList="getTableData"
-    ></DeleteDialog>
+    />
   </div>
 </template>
 
@@ -76,6 +110,9 @@
   import { USER_DIALOG_TITLE } from "./common"
   import DeleteDialog from "./dialogs/DeleteDialog.vue"
   import OperateDialog from "./dialogs/OperateDialog.vue"
+  import { Plus } from "@element-plus/icons-vue"
+  import { ElMessage } from "element-plus"
+
   // table元素
   const tableRef = ref()
   // table高度
@@ -119,6 +156,15 @@
     }
   }
 
+  // const handleStatusChange = async (row: User) => {
+  //   try {
+  //     // 这里添加修改用户状态的接口调用
+  //     ElMessage.success("状态修改成功")
+  //   } catch (error) {
+  //     ElMessage.error("状态修改失败")
+  //   }
+  // }
+
   onMounted(() => {
     tableHeight.value = tableRef.value.offsetHeight
     window.onresize = () => {
@@ -127,4 +173,19 @@
   })
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+  :deep(.el-card) {
+    border: 1px solid #ebeef5;
+    background-color: #fff;
+    color: #303133;
+    transition: 0.3s;
+    padding: 16px;
+
+    .el-card__body {
+      padding: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+</style>

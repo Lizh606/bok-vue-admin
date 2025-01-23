@@ -1,5 +1,5 @@
-import { del, get, patch, post } from '@/utils/fetch'
-import { BASE_URL } from '.'
+import { del, get, patch, post } from "@/utils/fetch"
+import { BASE_URL } from "."
 export type Post = {
   id?: number
   title: string
@@ -23,4 +23,8 @@ export const updatePost = async (id: number, params: Post) => {
 
 export const deletePost = async (id: number) => {
   return await del(`${BASE_URL}posts/${id}`)
+}
+
+export const getPostDetail = async (id: number) => {
+  return await get(`${BASE_URL}posts/${id}`)
 }

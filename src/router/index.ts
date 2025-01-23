@@ -14,9 +14,9 @@ const router = createRouter({
         {
           path: "/dashboard",
           name: "dashboard",
-          component: () => import("@/views/HomeView.vue"),
+          component: () => import("@/views/Dashboard/Dashboard.vue"),
           meta: {
-            title: "控制台"
+            title: "仪表盘"
           }
         },
         {
@@ -38,18 +38,29 @@ const router = createRouter({
         {
           path: "/article",
           name: "article",
-          component: () => import("@/views/Post/Post.vue"),
+          component: () => import("@/views/Post/PostLayout.vue"),
           meta: {
             title: "博文管理"
-          }
-        },
-        {
-          path: "/article/edit",
-          name: "edit",
-          component: () => import("@/views/Post/Edit.vue"),
-          meta: {
-            title: "博文编辑"
-          }
+          },
+          redirect: { name: "list" },
+          children: [
+            {
+              path: "list",
+              name: "list",
+              component: () => import("@/views/Post/Post.vue"),
+              meta: {
+                title: "博文列表"
+              }
+            },
+            {
+              path: "edit",
+              name: "edit",
+              component: () => import("@/views/Post/PostEditor.vue"),
+              meta: {
+                title: "博文编辑"
+              }
+            }
+          ]
         }
       ]
     },

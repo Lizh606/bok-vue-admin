@@ -4,9 +4,9 @@ console.log(import.meta.env)
 
 export const BASE_URL = import.meta.env.VITE_APP_API
 export interface Profile {
-  id: number
-  gender: string
-  address: string
+  id?: number
+  gender?: string
+  address?: string
 }
 export interface Role {
   id: number

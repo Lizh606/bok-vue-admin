@@ -1,16 +1,16 @@
 <template>
-  <div class="tw-h-full tw-flex">
+  <div class="tw-flex tw-h-full">
     <Menu />
-    <div class="tw-flex tw-flex-col tw-flex-1 tw-min-w-0">
+    <div class="tw-flex tw-min-w-0 tw-flex-1 tw-flex-col">
       <Header />
-      <RouterView class="tw-flex-1 tw-min-h-0 tw-bg-gray-100 tw-p-4" />
+      <RouterView class="tw-min-h-0 tw-flex-1 tw-bg-gray-50 tw-p-6" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import Header from './Header.vue'
-import Menu from './Menu.vue'
+  import { RouterView } from "vue-router"
+  import Header from "./Header.vue"
+  import Menu from "./Menu.vue"
 </script>
 
 <style lang="scss"></style>
