@@ -92,7 +92,8 @@
         </div>
 
         <el-form-item label="文章内容" prop="content">
-          <BlogEditor v-model="formData.content" class="tw-mb-4" />
+          <!-- <BlogEditor v-model="formData.content" class="tw-mb-4" /> -->
+          <el-input v-model="formData.content" type="textarea" :rows="15" />
         </el-form-item>
       </el-card>
     </el-form>
@@ -107,7 +108,6 @@
   import { useRouter, useRoute } from "vue-router"
   import BlogEditor from "@/components/BlogEditor.vue"
   import { addPost, getPostDetail, updatePost } from "@/services/posts"
-
   const router = useRouter()
   const route = useRoute()
   const formRef = ref<FormInstance>()
@@ -186,9 +186,109 @@
   onMounted(() => {
     initFormData()
   })
+  function convertHtmlToJsx(html: string) {
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(html, "text/html")
+
+    function transformNode(node: any): string {
+      let jsx = ""
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        // 处理文本节点
+        jsx = node.textContent || ""
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const tagName = node.tagName.toLowerCase()
+        let jsxTag = tagName
+
+        // 将 class 转换为 className
+        if (node.hasAttribute("class")) {
+          node.setAttribute("className", node.getAttribute("class") || "")
+          node.removeAttribute("class")
+        }
+
+        // 遍历节点的所有属性
+        let attributes = ""
+        for (const attr of node.attributes) {
+          const name = attr.name
+          const value = attr.value
+
+          // 处理样式，将样式值转为对象格式（需要对 camelCase 处理）
+          if (name === "style") {
+            // 处理 style 属性，确保值是一个对象格式的字符串
+            const styleObj = styleToObject(value)
+            attributes += ` style={${JSON.stringify(styleObj)}}`
+          }
+          // 替换特殊的 HTML 属性为 JSX 支持的属性
+          else if (name === "class") {
+            attributes += ` className="${value}"`
+          } else if (name === "for") {
+            attributes += ` htmlFor="${value}"` // for 转换为 htmlFor
+          } else if (name === "placeholder") {
+            attributes += ` placeholder="${value}"`
+          } else {
+            // 处理其他常规属性
+            attributes += ` ${name}="${value}"`
+          }
+        }
+
+        // 处理自闭合标签
+        if (["img", "input", "br", "hr", "meta", "link"].includes(tagName)) {
+          jsx = `<${jsxTag}${attributes} />`
+        } else {
+          // 处理子节点
+          let childrenJsx = ""
+          for (let child of node.childNodes) {
+            childrenJsx += transformNode(child)
+          }
+
+          jsx = `<${jsxTag}${attributes}>${childrenJsx}</${jsxTag}>`
+        }
+      }
+
+      return jsx
+    }
+
+    // 辅助函数：将 style 字符串转为对象格式
+    function styleToObject(styleStr: string): object {
+      const styleObj: { [key: string]: string } = {}
+      const styleArr = styleStr
+        .split(";")
+        .map((s) => s.trim())
+        .filter(Boolean)
+      styleArr.forEach((rule) => {
+        const [property, value] = rule.split(":").map((s) => s.trim())
+        if (property && value) {
+          styleObj[camelCase(property)] = value
+        }
+      })
+      return styleObj
+    }
+
+    // 辅助函数：将 CSS 属性转为 camelCase
+    function camelCase(str: string): string {
+      return str.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase())
+    }
+
+    // 获取所有子元素，跳过 body 标签
+    const bodyNode = doc.body
+    let jsxContent = ""
+    for (let child of bodyNode.childNodes) {
+      jsxContent += transformNode(child)
+    }
+
+    return jsxContent
+  }
 
   const handleSubmit = async () => {
     if (!formRef.value) return
+    // const content = convertHtmlToJsx(
+    //   JSON.parse(JSON.stringify(formData.content))
+    // )
+    // const turndownService = new TurndownService()
+    // const markdown = turndownService.turndown(
+    //   JSON.parse(JSON.stringify(formData.content))
+    // )
+    // console.log(markdown)
 
     await formRef.value.validate(async (valid) => {
       if (valid) {
