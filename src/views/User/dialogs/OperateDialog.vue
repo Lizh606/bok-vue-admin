@@ -49,7 +49,12 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="closeDialog">取消</el-button>
-        <el-button type="primary" @click="handleSubmit" :loading="isSubmitting">
+        <el-button
+          type="primary"
+          @click="handleSubmit"
+          :loading="isSubmitting"
+          v-if="isAdmin"
+        >
           {{ props.title === USER_DIALOG_TITLE.ADD ? "确认添加" : "确认更新" }}
         </el-button>
       </div>
@@ -61,8 +66,9 @@
   import type { Role, User } from "@/services"
   import { addUser, getRoleList, updateUser } from "@/services"
   import { ElMessage } from "element-plus"
-  import { onMounted, ref, watch } from "vue"
+  import { computed, onMounted, ref, watch } from "vue"
   import { USER_DIALOG_TITLE } from "../common"
+  import { useAppStore } from "@/stores/app"
 
   interface FormData extends Omit<User, "roles"> {
     roles: number[]
@@ -83,7 +89,10 @@
   const emit = defineEmits<{
     updateList: []
   }>()
-
+  const isAdmin = computed(() => {
+    const userInfo = useAppStore().userInfo
+    return userInfo.roles && userInfo.roles.some((item) => item.id === 1)
+  })
   // 状态管理
   const formLabelWidth = ref(80)
   const isRolesLoading = ref(false)

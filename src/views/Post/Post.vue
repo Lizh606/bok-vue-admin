@@ -68,6 +68,7 @@
                 >编辑</el-button
               >
               <el-button
+                v-if="isAdmin"
                 link
                 type="danger"
                 @click="openDialog('delete', scope.row)"

@@ -1,4 +1,5 @@
 import { del, get, post } from "@/utils/fetch"
+import type { ApiResult } from "./posts"
 // export const BASE_URL = 'http://106.54.47.60:13000/'
 console.log(import.meta.env)
 
@@ -28,7 +29,7 @@ export const getUserListByPage = async (params: {
   page: number
   size: number
 }) => {
-  return await get(
+  return await get<ApiResult<User>>(
     `${BASE_URL}v1/user/page?page=${params.page}&size=${params.size}`
   )
 }
@@ -45,7 +46,7 @@ export const deleteUser = async (id: number) => {
   return await del(`${BASE_URL}v1/user/${id}`)
 }
 export const getRoleList = async () => {
-  return await get(`${BASE_URL}roles`, {}, false)
+  return await get<Role[]>(`${BASE_URL}roles`, {}, false)
 }
 
 export const getUserInfo = async () => {

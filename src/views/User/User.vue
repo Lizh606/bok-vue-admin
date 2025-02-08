@@ -2,7 +2,7 @@
   <div class="tw-flex tw-flex-col tw-gap-4">
     <div class="tw-flex tw-items-center tw-justify-between">
       <div class="tw-text-xl tw-font-bold">用户管理</div>
-      <el-button type="primary" @click="openDialog('add')">
+      <el-button type="primary" @click="openDialog('add')" v-if="isAdmin">
         <el-icon class="tw-mr-1"><Plus /></el-icon>新增用户
       </el-button>
     </div>
@@ -68,6 +68,7 @@
                 type="danger"
                 link
                 @click="openDialog('delete', scope.row)"
+                v-if="isAdmin"
               >
                 删除
               </el-button>
@@ -106,12 +107,12 @@
 <script setup lang="ts">
   import useTablePagination from "@/hooks/useTablePagination"
   import { getUserListByPage, type Role, type User } from "@/services"
-  import { onMounted, ref } from "vue"
+  import { computed, onMounted, ref } from "vue"
   import { USER_DIALOG_TITLE } from "./common"
   import DeleteDialog from "./dialogs/DeleteDialog.vue"
   import OperateDialog from "./dialogs/OperateDialog.vue"
   import { Plus } from "@element-plus/icons-vue"
-  import { ElMessage } from "element-plus"
+  import { useAppStore } from "@/stores/app"
 
   // table元素
   const tableRef = ref()
@@ -129,6 +130,11 @@
       FormatData,
       immediate: true
     })
+
+  const isAdmin = computed(() => {
+    const userInfo = useAppStore().userInfo
+    return userInfo.roles && userInfo.roles.some((item) => item.id === 1)
+  })
   const addDialog = ref(false)
   const deleteDialog = ref(false)
   const dialogTitle = ref(USER_DIALOG_TITLE.ADD)

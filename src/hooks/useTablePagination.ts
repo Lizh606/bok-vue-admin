@@ -1,8 +1,6 @@
+import type { ApiResult } from "@/services/posts"
 import { computed, onMounted, ref } from "vue"
-interface ApiResult<T> {
-  data: T[]
-  total: number
-}
+
 interface QueryParams {
   page: number
   size: number
