@@ -1,4 +1,4 @@
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from "vue"
 interface ApiResult<T> {
   data: T[]
   total: number
@@ -32,7 +32,7 @@ export default function <T>(api: api<T>, options: TableOptions<T>) {
       totalRef.value = total
       tableData.value = FormatData ? FormatData(data) : data
     } catch (error) {
-      throw new Error('请求失败')
+      throw new Error("请求失败")
     }
   }
   immediate && onMounted(getTableData)

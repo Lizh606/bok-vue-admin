@@ -19,6 +19,7 @@ export interface User {
   roles?: Role[]
   profile?: Profile
 }
+
 export const login = async (data: User) => {
   return await post(`${BASE_URL}auth/signIn`, data)
 }
@@ -44,9 +45,13 @@ export const deleteUser = async (id: number) => {
   return await del(`${BASE_URL}v1/user/${id}`)
 }
 export const getRoleList = async () => {
-  return await get(`${BASE_URL}roles`)
+  return await get(`${BASE_URL}roles`, {}, false)
 }
 
 export const getUserInfo = async () => {
-  return await get(`${BASE_URL}/v1/user/userInfo`)
+  return await get(`${BASE_URL}/v1/user/userInfo`, {}, false)
+}
+
+export const getUserProfile = async (id: number) => {
+  return await get<User>(`${BASE_URL}/v1/user/profile/${id}`, {}, false)
 }

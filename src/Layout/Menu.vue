@@ -14,7 +14,7 @@
         <el-icon @click="isCollapse = !isCollapse">
           <WindPower class="tw-cursor-pointer tw-text-white" />
         </el-icon>
-        <span class="tw-text-xl tw-font-bold">博客管理</span>
+        <span class="tw-text-xl tw-font-bold">博客运维</span>
       </div>
       <el-icon @click="isCollapse = !isCollapse" v-show="isCollapse">
         <Expand class="tw-cursor-pointer tw-text-white" />

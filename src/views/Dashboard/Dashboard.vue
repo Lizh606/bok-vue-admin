@@ -1,37 +1,45 @@
 <template>
-  <div class="tw-flex tw-flex-col tw-gap-4">
+  <div class="tw-flex tw-flex-col tw-gap-6">
     <!-- 标题栏 -->
-    <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-text-xl tw-font-bold">仪表盘</div>
+    <div class="tw-flex tw-items-center">
+      <div class="tw-text-2xl tw-font-bold tw-text-gray-800">仪表盘</div>
     </div>
+
     <!-- 统计卡片区域 -->
-    <div class="tw-grid tw-grid-cols-4 tw-gap-4">
-      <el-card
+    <div class="tw-grid tw-grid-cols-4 tw-gap-6">
+      <div
         v-for="stat in statistics"
         :key="stat.title"
-        shadow="never"
-        :class="[stat.bgColor, stat.borderColor]"
-        class="!tw-border !tw-border-solid"
+        class="tw-relative tw-overflow-hidden tw-rounded-xl tw-p-6"
+        :class="[stat.bgColor]"
       >
         <div class="tw-flex tw-items-center tw-gap-4">
-          <el-icon class="tw-text-2xl" :class="stat.iconColor">
-            <component :is="stat.icon" />
-          </el-icon>
+          <div :class="['tw-rounded-lg tw-p-3']">
+            <el-icon class="tw-text-2xl">
+              <component :is="stat.icon" />
+            </el-icon>
+          </div>
           <div>
-            <div class="tw-text-gray-600">{{ stat.title }}</div>
-            <div class="tw-text-xl tw-font-bold tw-text-gray-800">
+            <div class="tw-text-sm tw-text-gray-600">{{ stat.title }}</div>
+            <div class="tw-mt-1 tw-text-2xl tw-font-bold tw-text-gray-800">
               {{ stat.value }}
             </div>
           </div>
         </div>
-      </el-card>
+        <div
+          class="tw-absolute tw-bottom-0 tw-right-0 tw-translate-x-2 tw-translate-y-2 tw-opacity-10"
+        >
+          <component :is="stat.icon" class="tw-text-6xl" />
+        </div>
+      </div>
     </div>
+
     <div class="tw-min-h-0 tw-flex-1 tw-overflow-auto">
       <div class="tw-flex tw-flex-col tw-gap-4">
         <!-- 图表区域 -->
         <div class="tw-grid tw-grid-cols-2 tw-gap-4">
           <!-- 访问趋势图 -->
-          <el-card shadow="never" class="tw-h-80">
+          <el-card shadow="never" class="tw-flex tw-h-80 tw-flex-col">
             <template #header>
               <div class="tw-flex tw-items-center tw-justify-between">
                 <span class="tw-font-medium">访问趋势</span>
@@ -45,7 +53,7 @@
           </el-card>
 
           <!-- 文章分类统计 -->
-          <el-card shadow="never" class="tw-h-80">
+          <el-card shadow="never" class="tw-flex tw-h-80 tw-flex-col">
             <template #header>
               <div class="tw-flex tw-items-center tw-justify-between">
                 <span class="tw-font-medium">文章分类</span>
@@ -118,12 +126,11 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from "vue"
-  import { Plus, Document, View, Comment, Star } from "@element-plus/icons-vue"
-  import { useRouter } from "vue-router"
+  import { ref, onMounted, onUnmounted } from "vue"
+  import { Document, View, Comment, Star } from "@element-plus/icons-vue"
   import * as echarts from "echarts"
+  import { getPostStatistics, type SortStatistics } from "@/services/posts"
 
-  const router = useRouter()
   const visitTimeRange = ref("week")
   const visitChartRef = ref()
   const categoryChartRef = ref()
@@ -132,35 +139,35 @@
   const statistics = ref([
     {
       title: "文章总数",
-      value: 125,
+      value: 0,
       icon: Document,
       iconColor: "tw-text-blue-600",
-      bgColor: "tw-bg-gradient-to-r tw-from-blue-100 tw-to-blue-200",
-      borderColor: "!tw-border-blue-300"
+      iconBg: "tw-bg-blue-100",
+      bgColor: "tw-bg-gradient-to-br tw-from-blue-100 tw-to-blue-50"
     },
     {
       title: "总阅读量",
-      value: "12.5k",
+      value: "0k",
       icon: View,
       iconColor: "tw-text-green-600",
-      bgColor: "tw-bg-gradient-to-r tw-from-green-100 tw-to-green-200",
-      borderColor: "!tw-border-green-300"
+      iconBg: "tw-bg-green-100",
+      bgColor: "tw-bg-gradient-to-br tw-from-green-100 tw-to-green-50"
     },
     {
       title: "评论数",
-      value: 358,
+      value: 0,
       icon: Comment,
       iconColor: "tw-text-orange-600",
-      bgColor: "tw-bg-gradient-to-r tw-from-orange-100 tw-to-orange-200",
-      borderColor: "!tw-border-orange-300"
+      iconBg: "tw-bg-orange-100",
+      bgColor: "tw-bg-gradient-to-br tw-from-orange-100 tw-to-orange-50"
     },
     {
       title: "收藏数",
-      value: 86,
+      value: 0,
       icon: Star,
       iconColor: "tw-text-purple-600",
-      bgColor: "tw-bg-gradient-to-r tw-from-purple-100 tw-to-purple-200",
-      borderColor: "!tw-border-purple-300"
+      iconBg: "tw-bg-purple-100",
+      bgColor: "tw-bg-gradient-to-br tw-from-purple-100 tw-to-purple-50"
     }
   ])
 
@@ -198,10 +205,6 @@
     }
   ])
 
-  const navigateToNewPost = () => {
-    router.push("/article/edit")
-  }
-
   const initVisitChart = () => {
     const chart = echarts.init(visitChartRef.value)
     chart.setOption({
@@ -223,7 +226,7 @@
     })
   }
 
-  const initCategoryChart = () => {
+  const initCategoryChart = (data: { value: number; name: string }[]) => {
     const chart = echarts.init(categoryChartRef.value)
     chart.setOption({
       tooltip: { trigger: "item" },
@@ -232,13 +235,7 @@
         {
           type: "pie",
           radius: "50%",
-          data: [
-            { value: 35, name: "前端开发" },
-            { value: 20, name: "后端技术" },
-            { value: 15, name: "数据库" },
-            { value: 25, name: "开发工具" },
-            { value: 5, name: "其他" }
-          ],
+          data: data,
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
@@ -250,10 +247,19 @@
       ]
     })
   }
-
-  onMounted(() => {
+  const getStatistics = async () => {
+    const { sortStatistics, total } = await getPostStatistics()
+    statistics.value[0].value = total
+    initCategoryChart(
+      sortStatistics.map((item) => ({
+        value: item.count,
+        name: item.sort
+      }))
+    )
+  }
+  onMounted(async () => {
+    await getStatistics()
     initVisitChart()
-    initCategoryChart()
 
     window.addEventListener("resize", () => {
       const visitChart = echarts.getInstanceByDom(visitChartRef.value)
@@ -266,21 +272,24 @@
 
 <style lang="scss" scoped>
   :deep(.el-card) {
-    border: 1px solid #ebeef5;
-    background-color: #fff;
-    color: #303133;
-    transition: 0.3s;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
+    @apply tw-rounded-xl tw-border-none tw-shadow-sm;
 
-    .el-card__body {
-      padding: 0.5rem;
-      flex: 1;
-      min-height: 0;
+    .el-card__header {
+      @apply tw-border-none tw-bg-transparent tw-px-6 tw-pt-6;
     }
 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    .el-card__body {
+      @apply tw-min-h-0 tw-flex-1 tw-p-6;
+    }
+  }
+
+  .el-card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
   }
 </style>

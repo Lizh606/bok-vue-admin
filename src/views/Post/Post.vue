@@ -2,7 +2,7 @@
   <div class="tw-flex tw-flex-col tw-gap-4">
     <div class="tw-flex tw-items-center tw-justify-between">
       <div class="tw-text-xl tw-font-bold">文章管理</div>
-      <el-button type="primary" @click="openDialog('add')">
+      <el-button type="primary" @click="openDialog('add')" v-if="isAdmin">
         <el-icon class="tw-mr-1"><Plus /></el-icon>新增文章
       </el-button>
     </div>
@@ -12,6 +12,8 @@
         <el-table
           :data="tableData"
           :height="tableHeight"
+          stripe
+          border
           style="width: 100%"
           :header-cell-style="{
             background: '#f8f9fa',
@@ -25,6 +27,12 @@
             label="文章标题"
             min-width="300"
             align="left"
+          />
+          <el-table-column
+            prop="userName"
+            label="作者"
+            width="160"
+            align="center"
           />
           <el-table-column prop="sort" label="分类" width="160" align="center">
             <template #default="scope">
@@ -95,10 +103,12 @@
   import useTablePagination from "@/hooks/useTablePagination"
   import type { Post } from "@/services/posts"
   import { getPostList } from "@/services/posts"
-  import { onMounted, ref } from "vue"
+  import { onMounted, ref, computed, watch } from "vue"
   import DeleteDialog from "./dialogs/DeleteDialog.vue"
   import { Plus } from "@element-plus/icons-vue"
   import { useRouter } from "vue-router"
+  import { useAppStore } from "@/stores/app"
+  import { getUserProfile, type User } from "@/services"
 
   // table元素
   const tableRef = ref()
@@ -110,10 +120,36 @@
       queryParams: { page: 1, size: 15 },
       immediate: true
     })
+  watch(
+    tableData,
+    async (newVal) => {
+      if (newVal.length === 0) return
+      const userIds = [
+        ...new Set(newVal.map((item) => item.userId))
+      ] as number[]
+      const userInfoMap = new Map()
+      const userInfoList = await Promise.all(
+        userIds.map((id) => getUserProfile(id))
+      )
+      userInfoList.forEach((user) => {
+        userInfoMap.set(user.id, user)
+      })
+      newVal.forEach((item) => {
+        item.userName = userInfoMap.get(item.userId)?.username || "未知用户"
+      })
+    },
+    {
+      deep: true,
+      immediate: true
+    }
+  )
   const deleteDialog = ref(false)
   const currentFormData = ref()
   const router = useRouter()
-
+  const isAdmin = computed(() => {
+    const userInfo = useAppStore().userInfo
+    return userInfo.roles && userInfo.roles.some((item) => item.id === 1)
+  })
   const openDialog = (type: string, data?: any) => {
     currentFormData.value = data
     switch (type) {

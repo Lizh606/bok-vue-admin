@@ -1,12 +1,19 @@
 <template>
-  <div class="tw-flex tw-h-full tw-flex-col tw-gap-6">
+  <div
+    class="loadingDom tw-flex tw-h-full tw-flex-col tw-gap-6"
+    ref="containerRef"
+  >
     <div class="tw-flex tw-items-center tw-justify-between">
       <div class="tw-font-serif tw-text-2xl tw-text-gray-800">
         {{ isEdit ? "编辑文章" : "写文章" }}
       </div>
       <div class="tw-flex tw-gap-3">
         <el-button @click="$router.back()">返回</el-button>
-        <el-button class="blog-btn" @click="handleSubmit">
+        <el-button
+          class="blog-btn"
+          @click="handleSubmit"
+          v-if="isAdmin || !route.query.id"
+        >
           <el-icon class="tw-mr-1"><DocumentAdd /></el-icon>发布
         </el-button>
       </div>
@@ -101,18 +108,24 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onBeforeUnmount, onMounted } from "vue"
+  import { ref, reactive, onBeforeUnmount, onMounted, computed } from "vue"
   import { DocumentAdd } from "@element-plus/icons-vue"
   import { ElMessage } from "element-plus"
   import type { FormInstance, FormRules } from "element-plus"
   import { useRouter, useRoute } from "vue-router"
   import BlogEditor from "@/components/BlogEditor.vue"
   import { addPost, getPostDetail, updatePost } from "@/services/posts"
+  import { useAppStore } from "@/stores/app"
   const router = useRouter()
   const route = useRoute()
   const formRef = ref<FormInstance>()
   const isEdit = ref(false)
+  const isAdmin = computed(() => {
+    const userInfo = useAppStore().userInfo
+    return userInfo.roles && userInfo.roles.some((item) => item.id === 1)
+  })
 
+  const containerRef = ref<HTMLElement>()
   const formData = reactive({
     id: undefined as number | undefined,
     title: "",
@@ -166,7 +179,7 @@
     if (id) {
       isEdit.value = true
       try {
-        const detail = await getPostDetail(Number(id))
+        const detail = await getPostDetail(Number(id), containerRef.value)
         Object.assign(formData, {
           id: detail.id,
           title: detail.title,
@@ -186,98 +199,6 @@
   onMounted(() => {
     initFormData()
   })
-  function convertHtmlToJsx(html: string) {
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(html, "text/html")
-
-    function transformNode(node: any): string {
-      let jsx = ""
-
-      if (node.nodeType === Node.TEXT_NODE) {
-        // 处理文本节点
-        jsx = node.textContent || ""
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const tagName = node.tagName.toLowerCase()
-        let jsxTag = tagName
-
-        // 将 class 转换为 className
-        if (node.hasAttribute("class")) {
-          node.setAttribute("className", node.getAttribute("class") || "")
-          node.removeAttribute("class")
-        }
-
-        // 遍历节点的所有属性
-        let attributes = ""
-        for (const attr of node.attributes) {
-          const name = attr.name
-          const value = attr.value
-
-          // 处理样式，将样式值转为对象格式（需要对 camelCase 处理）
-          if (name === "style") {
-            // 处理 style 属性，确保值是一个对象格式的字符串
-            const styleObj = styleToObject(value)
-            attributes += ` style={${JSON.stringify(styleObj)}}`
-          }
-          // 替换特殊的 HTML 属性为 JSX 支持的属性
-          else if (name === "class") {
-            attributes += ` className="${value}"`
-          } else if (name === "for") {
-            attributes += ` htmlFor="${value}"` // for 转换为 htmlFor
-          } else if (name === "placeholder") {
-            attributes += ` placeholder="${value}"`
-          } else {
-            // 处理其他常规属性
-            attributes += ` ${name}="${value}"`
-          }
-        }
-
-        // 处理自闭合标签
-        if (["img", "input", "br", "hr", "meta", "link"].includes(tagName)) {
-          jsx = `<${jsxTag}${attributes} />`
-        } else {
-          // 处理子节点
-          let childrenJsx = ""
-          for (let child of node.childNodes) {
-            childrenJsx += transformNode(child)
-          }
-
-          jsx = `<${jsxTag}${attributes}>${childrenJsx}</${jsxTag}>`
-        }
-      }
-
-      return jsx
-    }
-
-    // 辅助函数：将 style 字符串转为对象格式
-    function styleToObject(styleStr: string): object {
-      const styleObj: { [key: string]: string } = {}
-      const styleArr = styleStr
-        .split(";")
-        .map((s) => s.trim())
-        .filter(Boolean)
-      styleArr.forEach((rule) => {
-        const [property, value] = rule.split(":").map((s) => s.trim())
-        if (property && value) {
-          styleObj[camelCase(property)] = value
-        }
-      })
-      return styleObj
-    }
-
-    // 辅助函数：将 CSS 属性转为 camelCase
-    function camelCase(str: string): string {
-      return str.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase())
-    }
-
-    // 获取所有子元素，跳过 body 标签
-    const bodyNode = doc.body
-    let jsxContent = ""
-    for (let child of bodyNode.childNodes) {
-      jsxContent += transformNode(child)
-    }
-
-    return jsxContent
-  }
 
   const handleSubmit = async () => {
     if (!formRef.value) return
@@ -289,7 +210,6 @@
     //   JSON.parse(JSON.stringify(formData.content))
     // )
     // console.log(markdown)
-
     await formRef.value.validate(async (valid) => {
       if (valid) {
         try {
@@ -303,9 +223,13 @@
           }
 
           if (isEdit.value) {
-            await updatePost(formData.id as number, postData)
+            await updatePost(
+              formData.id as number,
+              postData,
+              containerRef.value
+            )
           } else {
-            await addPost(postData)
+            await addPost(postData, containerRef.value)
           }
 
           ElMessage.success(isEdit.value ? "文章更新成功" : "文章发布成功")
