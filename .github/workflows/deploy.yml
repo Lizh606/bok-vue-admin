@@ -46,7 +46,7 @@ jobs:
 
       - name: 构建 Docker 镜像
         run: |
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker build -t unusualapp:latest /home/Unusual-Admin/'
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker build -t vue-admin-app:latest /home/Unusual-Admin/'
 
       - name: 部署 Docker 容器
         run: |
@@ -55,12 +55,12 @@ jobs:
             docker network create app_common-network 2>/dev/null || true
             
             # 停止并删除旧容器
-            docker stop unusualapp || true
-            docker rm unusualapp || true
+            docker stop vue-admin-app || true
+            docker rm vue-admin-app || true
             
             # 运行新容器
-            docker run -d --name unusualapp \
+            docker run -d --name vue-admin-app \
               -p 8080:8080 \
               --network=app_common-network \
-              unusualapp:latest
+              vue-admin-app:latest
           EOF
