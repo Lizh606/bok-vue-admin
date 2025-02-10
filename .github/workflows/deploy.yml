@@ -51,7 +51,16 @@ jobs:
       - name: 部署 Docker 容器
         run: |
           ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            # 确保网络存在，如果不存在则创建
+            docker network create app_common-network 2>/dev/null || true
+            
+            # 停止并删除旧容器
             docker stop unusualapp || true
             docker rm unusualapp || true
-            docker run -d --name unusualapp -p 8080:8080 --network=app_common-network unusualapp:latest
+            
+            # 运行新容器
+            docker run -d --name unusualapp \
+              -p 8080:8080 \
+              --network=app_common-network \
+              unusualapp:latest
           EOF
