@@ -35,7 +35,7 @@ export const getUserListByPage = async (params: {
 }
 
 export const addUser = async (params: User) => {
-  return await post(`${BASE_URL}v1/user`, params)
+  return await post(`${BASE_URL}v1/user/create`, params)
 }
 
 export const updateUser = async (id: number, params: User) => {
@@ -46,7 +46,7 @@ export const deleteUser = async (id: number) => {
   return await del(`${BASE_URL}v1/user/${id}`)
 }
 export const getRoleList = async () => {
-  return await get<Role[]>(`${BASE_URL}roles`, {}, false)
+  return await get<Role[]>(`${BASE_URL}roles/list`, {}, false)
 }
 
 export const getUserInfo = async () => {

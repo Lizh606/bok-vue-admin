@@ -27,7 +27,7 @@ export type PostStatistics = {
 }
 export const addPost = async (params: Post, loadingTarget?: HTMLElement) => {
   return await post(
-    `${BASE_URL}posts`,
+    `${BASE_URL}posts/create`,
     params,
     {},
     { target: loadingTarget || document.body }
@@ -39,7 +39,7 @@ export const getPostList = async (
   loadingTarget?: HTMLElement
 ) => {
   return await get<ApiResult<Post>>(
-    `${BASE_URL}posts?page=${params.page}&size=${params.size}`,
+    `${BASE_URL}posts/list?page=${params.page}&size=${params.size}`,
     {},
     { target: loadingTarget || document.body }
   )
