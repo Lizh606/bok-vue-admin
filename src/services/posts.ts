@@ -29,9 +29,7 @@ export const addPost = async (params: Post, loadingTarget?: HTMLElement) => {
   return await post(
     `${BASE_URL}posts/create`,
     params,
-    {
-      "Content-Type": "application/json"
-    },
+    {},
     { target: loadingTarget || document.body }
   )
 }

@@ -72,9 +72,16 @@ export const post = <T>(
   headers?: Record<string, string>,
   loadingOptions?: LoadingOptions | false
 ): Promise<T> => {
+  const defaultHeaders = {
+    "Content-Type": "application/json"
+  }
   return request(
     url,
-    { method: "POST", body: JSON.stringify(body), headers },
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { ...defaultHeaders, ...headers }
+    },
     loadingOptions
   )
 }
