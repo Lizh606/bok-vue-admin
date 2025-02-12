@@ -40,13 +40,13 @@ jobs:
       - name: Sync files to server
         run: |
           # 使用 rsync 同步 dist 目录、Dockerfile 和 nginx.config 文件
-          rsync -avz --delete ./dist ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/wanyue-admin/
-          rsync -avz --delete ./Dockerfile ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/wanyue-admin/
-          rsync -avz --delete ./nginx.conf ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/wanyue-admin/
+          rsync -avz --delete ./dist ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/blog/
+          rsync -avz --delete ./Dockerfile ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/blog/
+          rsync -avz --delete ./nginx.conf ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/blog/
 
       - name: 构建 Docker 镜像
         run: |
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker build -t vue-admin-app:latest /home/wanyue-admin/'
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'docker build -t vue-admin-app:latest /home/blog/'
 
       - name: 部署 Docker 容器
         run: |
