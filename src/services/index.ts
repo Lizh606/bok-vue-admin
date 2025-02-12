@@ -50,9 +50,9 @@ export const getRoleList = async () => {
 }
 
 export const getUserInfo = async () => {
-  return await get(`${BASE_URL}/v1/user/userInfo`, {}, false)
+  return await get(`${BASE_URL}v1/user/userInfo`, {}, false)
 }
 
 export const getUserProfile = async (id: number) => {
-  return await get<User>(`${BASE_URL}/v1/user/profile/${id}`, {}, false)
+  return await get<User>(`${BASE_URL}v1/user/profile/${id}`, {}, false)
 }

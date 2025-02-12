@@ -29,7 +29,9 @@ export const addPost = async (params: Post, loadingTarget?: HTMLElement) => {
   return await post(
     `${BASE_URL}posts/create`,
     params,
-    {},
+    {
+      "Content-Type": "application/json"
+    },
     { target: loadingTarget || document.body }
   )
 }
@@ -53,7 +55,9 @@ export const updatePost = async (
   return await patch(
     `${BASE_URL}posts/${id}`,
     params,
-    {},
+    {
+      "Content-Type": "application/json"
+    },
     { target: loadingTarget || document.body }
   )
 }
