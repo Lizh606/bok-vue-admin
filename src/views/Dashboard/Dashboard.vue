@@ -107,19 +107,52 @@
   const initCategoryChart = (data: { value: number; name: string }[]) => {
     const chart = echarts.init(categoryChartRef.value)
     chart.setOption({
-      tooltip: { trigger: "item" },
-      legend: { left: "center", bottom: "bottom" },
+      tooltip: {
+        trigger: "item",
+        formatter: "{b}: {c} ({d}%)"
+      },
+      legend: {
+        orient: "horizontal",
+        left: "center",
+        bottom: "bottom",
+        icon: "circle"
+      },
       series: [
         {
+          name: "文章分类",
           type: "pie",
-          radius: "50%",
+          radius: ["40%", "70%"], // 改成环形图
+          center: ["50%", "45%"],
+          avoidLabelOverlap: true,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: "#fff",
+            borderWidth: 2
+          },
+          label: {
+            show: true,
+            position: "outside",
+            formatter: "{b}\n{c}篇"
+          },
+          labelLine: {
+            length: 15,
+            length2: 0,
+            maxSurfaceAngle: 80
+          },
           data: data,
           emphasis: {
+            scale: true,
+            scaleSize: 5,
             itemStyle: {
               shadowBlur: 10,
               shadowOffsetX: 0,
               shadowColor: "rgba(0, 0, 0, 0.5)"
             }
+          },
+          animationType: "scale",
+          animationEasing: "elasticOut",
+          animationDelay: function () {
+            return Math.random() * 200
           }
         }
       ]
