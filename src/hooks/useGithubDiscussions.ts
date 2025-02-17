@@ -24,8 +24,16 @@ const GITHUB_API_URL = "https://api.github.com/graphql"
 export function useGithubDiscussions() {
   const token = ref<string | null>(null)
   const discussions = ref<Comment[]>([])
+  const totalCount = ref<number>(0)
   const loading = ref(false)
   const error = ref<string | null>(null)
+
+  // 添加公共过滤函数
+  const filterDiscussionsByEnv = (discussion: any): boolean => {
+    const isDev = import.meta.env.DEV
+    const hasDevTag = discussion.title.includes("[DEV]")
+    return isDev ? hasDevTag : !hasDevTag
+  }
 
   const fetchDiscussions = async () => {
     if (!token.value) {
@@ -34,17 +42,18 @@ export function useGithubDiscussions() {
     }
     loading.value = true
     error.value = null
-
+    const showDiscussionsNum = ref<number>(10)
     try {
       const query = `
         query {
           repository(owner: "lizh606", name: "bok-next-client") {
-            discussions(first: 10, orderBy: {field: CREATED_AT, direction: DESC}) {
+            discussions(first: ${showDiscussionsNum.value}, orderBy: {field: CREATED_AT, direction: DESC}) {
               nodes {
                 id
                 title
                 number
                 comments(first: 10) {
+                  totalCount
                   nodes {
                     id
                     body
@@ -79,11 +88,10 @@ export function useGithubDiscussions() {
       }
 
       const data = await response.json()
-      console.log(data)
 
-      // 处理并扁平化评论数据
+      // 使用公共过滤函数
       const allComments = data.data.repository.discussions.nodes
-        .filter((discussion: any) => !discussion.title.includes("[DEV]"))
+        .filter(filterDiscussionsByEnv)
         .flatMap((discussion: any) =>
           discussion.comments.nodes.map((comment: any) => ({
             ...comment,
@@ -92,14 +100,20 @@ export function useGithubDiscussions() {
             discussionUrl: `https://github.com/lizh606/bok-next-client/discussions/${discussion.number}`
           }))
         )
-
+      totalCount.value = data.data.repository.discussions.nodes
+        .filter(filterDiscussionsByEnv)
+        .reduce(
+          (total: number, discussion: any) =>
+            total + discussion.comments.totalCount,
+          0
+        )
       // 按时间排序并只取最新的10条评论
       discussions.value = allComments
         .sort(
           (a: any, b: any) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
-        .slice(0, 10)
+        .slice(0, showDiscussionsNum.value)
     } catch (e) {
       error.value = e instanceof Error ? e.message : "获取评论列表失败"
     } finally {
@@ -111,6 +125,7 @@ export function useGithubDiscussions() {
     discussions,
     loading,
     error,
+    totalCount,
     fetchDiscussions
   }
 }

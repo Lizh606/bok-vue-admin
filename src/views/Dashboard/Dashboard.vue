@@ -66,8 +66,6 @@
   import * as echarts from "echarts"
   import { onMounted, ref } from "vue"
 
-  const visitTimeRange = ref("week")
-  const visitChartRef = ref()
   const categoryChartRef = ref()
 
   // 统计数据
@@ -137,11 +135,17 @@
       }))
     )
   }
-  const { discussions, loading, error, fetchDiscussions } =
+  const { discussions, loading, fetchDiscussions, error, totalCount } =
     useGithubDiscussions()
 
   onMounted(async () => {
-    await fetchDiscussions()
+    try {
+      await fetchDiscussions()
+      console.log(totalCount.value)
+      statistics.value[2].value = totalCount.value
+    } catch (e) {
+      console.error(error.value)
+    }
     await getStatistics()
 
     window.addEventListener("resize", () => {
