@@ -1,4 +1,4 @@
-import type { User } from "@/services"
+import type { User } from "@/services/user"
 import { defineStore } from "pinia"
 import { ref } from "vue"
 type UserInfo = Pick<User, "username" | "roles">

@@ -91,7 +91,7 @@
   }>()
   const isAdmin = computed(() => {
     const userInfo = useAppStore().userInfo
-    return userInfo.roles && userInfo.roles.some((item: User) => item.id === 1)
+    return userInfo.roles && userInfo.roles.some((item: Role) => item.id === 1)
   })
   // 状态管理
   const formLabelWidth = ref(80)

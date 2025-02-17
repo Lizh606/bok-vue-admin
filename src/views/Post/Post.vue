@@ -104,7 +104,7 @@
   import useTablePagination from "@/hooks/useTablePagination"
   import type { Post } from "@/services/posts"
   import { getPostList } from "@/services/posts"
-  import { getUserProfile, type User } from "@/services/user"
+  import { getUserProfile, type Role } from "@/services/user"
   import { useAppStore } from "@/stores/app"
   import { Plus } from "@element-plus/icons-vue"
   import { computed, onMounted, ref, watch } from "vue"
@@ -149,7 +149,7 @@
   const router = useRouter()
   const isAdmin = computed(() => {
     const userInfo = useAppStore().userInfo
-    return userInfo.roles && userInfo.roles.some((item: User) => item.id === 1)
+    return userInfo.roles && userInfo.roles.some((item: Role) => item.id === 1)
   })
   const openDialog = (type: string, data?: any) => {
     currentFormData.value = data

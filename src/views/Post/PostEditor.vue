@@ -108,21 +108,21 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onBeforeUnmount, onMounted, computed } from "vue"
-  import { DocumentAdd } from "@element-plus/icons-vue"
-  import { ElMessage } from "element-plus"
-  import type { FormInstance, FormRules } from "element-plus"
-  import { useRouter, useRoute } from "vue-router"
-  import BlogEditor from "@/components/BlogEditor.vue"
   import { addPost, getPostDetail, updatePost } from "@/services/posts"
+  import type { Role } from "@/services/user"
   import { useAppStore } from "@/stores/app"
+  import { DocumentAdd } from "@element-plus/icons-vue"
+  import type { FormInstance, FormRules } from "element-plus"
+  import { ElMessage } from "element-plus"
+  import { computed, onMounted, reactive, ref } from "vue"
+  import { useRoute, useRouter } from "vue-router"
   const router = useRouter()
   const route = useRoute()
   const formRef = ref<FormInstance>()
   const isEdit = ref(false)
   const isAdmin = computed(() => {
     const userInfo = useAppStore().userInfo
-    return userInfo.roles && userInfo.roles.some((item) => item.id === 1)
+    return userInfo.roles && userInfo.roles.some((item: Role) => item.id === 1)
   })
 
   const containerRef = ref<HTMLElement>()

@@ -141,7 +141,6 @@
   onMounted(async () => {
     try {
       await fetchDiscussions()
-      console.log(totalCount.value)
       statistics.value[2].value = totalCount.value
     } catch (e) {
       console.error(error.value)

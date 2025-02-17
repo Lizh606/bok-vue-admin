@@ -106,7 +106,7 @@
 
 <script setup lang="ts">
   import useTablePagination from "@/hooks/useTablePagination"
-  import { getUserListByPage, type User } from "@/services/user"
+  import { getUserListByPage, type Role, type User } from "@/services/user"
   import { useAppStore } from "@/stores/app"
   import { Plus } from "@element-plus/icons-vue"
   import { computed, onMounted, ref } from "vue"
@@ -133,7 +133,7 @@
 
   const isAdmin = computed(() => {
     const userInfo = useAppStore().userInfo
-    return userInfo.roles && userInfo.roles.some((item: User) => item.id === 1)
+    return userInfo.roles && userInfo.roles.some((item: Role) => item.id === 1)
   })
   const addDialog = ref(false)
   const deleteDialog = ref(false)
