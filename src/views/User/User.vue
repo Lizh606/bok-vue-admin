@@ -11,7 +11,7 @@
       <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
         <el-table :data="tableData" :height="tableHeight" style="width: 100%">
           <el-table-column prop="id" label="ID" width="80" align="center" />
-          <el-table-column width="80" align="center">
+          <!-- <el-table-column width="80" align="center">
             <template #default="scope">
               <div class="tw-h-8 tw-w-8 tw-overflow-hidden tw-rounded-full">
                 <img
@@ -20,7 +20,7 @@
                 />
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             prop="username"
             label="用户名"
@@ -46,7 +46,7 @@
             align="center"
           />
           <el-table-column prop="address" label="地址" />
-          <el-table-column label="状态" width="100" align="center">
+          <!-- <el-table-column label="状态" width="100" align="center">
             <template #default="scope">
               <el-switch
                 v-model="scope.row.status"
@@ -54,7 +54,7 @@
                 :inactive-value="0"
               />
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="操作" width="180" align="center">
             <template #default="scope">
               <el-button
