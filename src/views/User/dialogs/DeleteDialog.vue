@@ -11,26 +11,26 @@
 </template>
 
 <script setup lang="ts">
-import { deleteUser } from '@/services'
-const dialogVisible = defineModel('show', { required: true })
+  import { deleteUser } from "@/services/user"
+  const dialogVisible = defineModel("show", { required: true })
 
-const props = defineProps({
-  currentFormData: {
-    type: Object,
-    required: true
-  }
-})
-const emit = defineEmits(['updateList'])
+  const props = defineProps({
+    currentFormData: {
+      type: Object,
+      required: true
+    }
+  })
+  const emit = defineEmits(["updateList"])
 
-const handleConfirm = async () => {
-  try {
-    await deleteUser(props.currentFormData.id)
-    dialogVisible.value = false
-    emit('updateList')
-  } catch (error) {
-    console.error(error)
+  const handleConfirm = async () => {
+    try {
+      await deleteUser(props.currentFormData.id)
+      dialogVisible.value = false
+      emit("updateList")
+    } catch (error) {
+      console.error(error)
+    }
   }
-}
 </script>
 
 <style lang="scss"></style>

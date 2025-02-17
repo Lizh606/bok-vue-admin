@@ -59,12 +59,12 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted } from "vue"
-  import { Document, View, Comment, Star } from "@element-plus/icons-vue"
-  import * as echarts from "echarts"
-  import { getPostStatistics, type SortStatistics } from "@/services/posts"
-  import { useGithubDiscussions } from "@/hooks/useGithubDiscussions"
   import CommentList from "@/components/CommentList.vue"
+  import { useGithubDiscussions } from "@/hooks/useGithubDiscussions"
+  import { getPostStatistics } from "@/services/posts"
+  import { Comment, Document, Star, View } from "@element-plus/icons-vue"
+  import * as echarts from "echarts"
+  import { onMounted, ref } from "vue"
 
   const visitTimeRange = ref("week")
   const visitChartRef = ref()

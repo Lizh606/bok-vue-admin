@@ -104,12 +104,12 @@
   import useTablePagination from "@/hooks/useTablePagination"
   import type { Post } from "@/services/posts"
   import { getPostList } from "@/services/posts"
-  import { onMounted, ref, computed, watch } from "vue"
-  import DeleteDialog from "./dialogs/DeleteDialog.vue"
-  import { Plus } from "@element-plus/icons-vue"
-  import { useRouter } from "vue-router"
+  import { getUserProfile, type User } from "@/services/user"
   import { useAppStore } from "@/stores/app"
-  import { getUserProfile, type User } from "@/services"
+  import { Plus } from "@element-plus/icons-vue"
+  import { computed, onMounted, ref, watch } from "vue"
+  import { useRouter } from "vue-router"
+  import DeleteDialog from "./dialogs/DeleteDialog.vue"
 
   // table元素
   const tableRef = ref()
@@ -149,7 +149,7 @@
   const router = useRouter()
   const isAdmin = computed(() => {
     const userInfo = useAppStore().userInfo
-    return userInfo.roles && userInfo.roles.some((item) => item.id === 1)
+    return userInfo.roles && userInfo.roles.some((item: User) => item.id === 1)
   })
   const openDialog = (type: string, data?: any) => {
     currentFormData.value = data

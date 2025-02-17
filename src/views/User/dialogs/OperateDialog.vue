@@ -63,12 +63,12 @@
 </template>
 
 <script setup lang="ts">
-  import type { Role, User } from "@/services"
-  import { addUser, getRoleList, updateUser } from "@/services"
+  import type { Role, User } from "@/services/user"
+  import { addUser, getRoleList, updateUser } from "@/services/user"
+  import { useAppStore } from "@/stores/app"
   import { ElMessage } from "element-plus"
   import { computed, onMounted, ref, watch } from "vue"
   import { USER_DIALOG_TITLE } from "../common"
-  import { useAppStore } from "@/stores/app"
 
   interface FormData extends Omit<User, "roles"> {
     roles: number[]
@@ -91,7 +91,7 @@
   }>()
   const isAdmin = computed(() => {
     const userInfo = useAppStore().userInfo
-    return userInfo.roles && userInfo.roles.some((item) => item.id === 1)
+    return userInfo.roles && userInfo.roles.some((item: User) => item.id === 1)
   })
   // 状态管理
   const formLabelWidth = ref(80)

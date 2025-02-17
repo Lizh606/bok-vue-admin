@@ -34,5 +34,32 @@ export default defineConfig({
     headers: {
       "Access-Control-Allow-Origin": "*"
     }
+  },
+  build: {
+    // 启用压缩
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true, // 移除console
+        drop_debugger: true // 移除debugger
+      }
+    },
+    // 分块打包
+    rollupOptions: {
+      output: {
+        chunkFileNames: "js/[name]-[hash].js",
+        entryFileNames: "js/[name]-[hash].js",
+        assetFileNames: "[ext]/[name]-[hash].[ext]",
+        // 分包配置
+        manualChunks: {
+          "vue-vendor": ["vue", "vue-router", "pinia"],
+          "element-plus": ["element-plus"]
+        }
+      }
+    },
+    // 启用 gzip 压缩
+    reportCompressedSize: false,
+    // 设置打包文件大小警告阈值
+    chunkSizeWarningLimit: 2000
   }
 })

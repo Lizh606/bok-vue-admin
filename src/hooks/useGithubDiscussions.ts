@@ -1,4 +1,5 @@
-import { ref, onMounted } from "vue"
+import { getGithubToken } from "@/services/user"
+import { ref } from "vue"
 
 // GitHub API 相关配置和类型定义
 interface Author {
@@ -21,11 +22,16 @@ export interface Comment {
 }
 const GITHUB_API_URL = "https://api.github.com/graphql"
 export function useGithubDiscussions() {
+  const token = ref<string | null>(null)
   const discussions = ref<Comment[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
 
   const fetchDiscussions = async () => {
+    if (!token.value) {
+      const res = await getGithubToken()
+      token.value = res.data
+    }
     loading.value = true
     error.value = null
 
@@ -57,11 +63,10 @@ export function useGithubDiscussions() {
           }
         }
       `
-
       const response = await fetch(GITHUB_API_URL, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_GITHUB_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${token.value}`,
           "Content-Type": "application/json",
           Accept: "application/json",
           "User-Agent": "Vue-App"

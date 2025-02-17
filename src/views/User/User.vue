@@ -106,13 +106,13 @@
 
 <script setup lang="ts">
   import useTablePagination from "@/hooks/useTablePagination"
-  import { getUserListByPage, type Role, type User } from "@/services"
+  import { getUserListByPage, type User } from "@/services/user"
+  import { useAppStore } from "@/stores/app"
+  import { Plus } from "@element-plus/icons-vue"
   import { computed, onMounted, ref } from "vue"
   import { USER_DIALOG_TITLE } from "./common"
   import DeleteDialog from "./dialogs/DeleteDialog.vue"
   import OperateDialog from "./dialogs/OperateDialog.vue"
-  import { Plus } from "@element-plus/icons-vue"
-  import { useAppStore } from "@/stores/app"
 
   // table元素
   const tableRef = ref()
@@ -133,7 +133,7 @@
 
   const isAdmin = computed(() => {
     const userInfo = useAppStore().userInfo
-    return userInfo.roles && userInfo.roles.some((item) => item.id === 1)
+    return userInfo.roles && userInfo.roles.some((item: User) => item.id === 1)
   })
   const addDialog = ref(false)
   const deleteDialog = ref(false)
