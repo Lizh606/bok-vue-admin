@@ -13,11 +13,13 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
+registerTrackDirectives(app)
 sleep(10)
 app.mount("#app")
 
 // wangEditor支持markdown
 import { Boot } from "@wangeditor/editor"
 import markdownModule from "@wangeditor/plugin-md"
+import { registerTrackDirectives } from "./directives"
 
 Boot.registerModule(markdownModule)
