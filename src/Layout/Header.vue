@@ -1,6 +1,6 @@
 <template>
   <div
-    class="tw-flex tw-h-14 tw-items-center tw-justify-between tw-px-4 tw-shadow-sm"
+    class="tw-bg-base tw-flex tw-h-14 tw-items-center tw-justify-between tw-px-4 tw-shadow-sm"
   >
     <div class="tw-flex tw-items-center tw-gap-2">
       <el-icon size="20"><HomeFilled /></el-icon>
@@ -20,6 +20,25 @@
         <el-icon><EditPen /></el-icon>
         写文章
       </el-button>
+
+      <el-dropdown @command="handleThemeChange">
+        <el-icon size="20" class="tw-cursor-pointer">
+          <component :is="themeIcon" />
+        </el-icon>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="light" :icon="Sunny">
+              亮色模式
+            </el-dropdown-item>
+            <el-dropdown-item command="dark" :icon="Moon">
+              暗色模式
+            </el-dropdown-item>
+            <el-dropdown-item command="system" :icon="Monitor">
+              跟随系统
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
 
       <el-tooltip content="站点统计" placement="bottom">
         <el-icon size="20" class="tw-cursor-pointer"><TrendCharts /></el-icon>
@@ -43,7 +62,7 @@
               class="tw-h-full tw-w-full tw-object-cover"
             />
           </div>
-          <span class="tw-text-gray-600">{{ userName }}</span>
+          <span class="tw-text-base">{{ userName }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
@@ -54,17 +73,20 @@
       </el-dropdown>
     </div>
   </div>
-  <div class="tw-h-[1px] tw-w-full tw-bg-gray-200"></div>
 </template>
 
 <script setup lang="ts">
   import { useAppStore } from "@/stores/app"
+  import { SupportModeEnum, useThemeStore } from "@/stores/theme"
   import {
     ArrowRight,
     ChatDotRound,
     EditPen,
     HomeFilled,
     Link,
+    Monitor,
+    Moon,
+    Sunny,
     TrendCharts
   } from "@element-plus/icons-vue"
   import { computed } from "vue"
@@ -87,6 +109,25 @@
   }
   const createPost = () => {
     router.push("/article/edit")
+  }
+
+  // 主题相关
+  const themeStore = useThemeStore()
+  const themeIcon = computed(() => {
+    switch (themeStore.theme) {
+      case "light":
+        return Sunny
+      case "dark":
+        return Moon
+      case "system":
+        return Monitor
+      default:
+        return Sunny
+    }
+  })
+
+  const handleThemeChange = (command: SupportModeEnum) => {
+    themeStore.changeTheme(command)
   }
 </script>
 

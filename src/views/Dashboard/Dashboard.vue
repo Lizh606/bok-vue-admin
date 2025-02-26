@@ -2,16 +2,16 @@
   <div class="tw-flex tw-flex-col tw-gap-6">
     <!-- 标题栏 -->
     <div class="tw-flex tw-items-center">
-      <div class="tw-text-2xl tw-font-bold tw-text-gray-800">仪表盘</div>
+      <div class="tw-text-light tw-text-2xl tw-font-bold">仪表盘</div>
     </div>
 
     <!-- 统计卡片区域 -->
     <div class="tw-grid tw-grid-cols-4 tw-gap-6">
-      <div
+      <el-card
         v-for="stat in statistics"
         :key="stat.title"
-        class="tw-relative tw-overflow-hidden tw-rounded-xl tw-p-6"
-        :class="[stat.bgColor]"
+        shadow="always"
+        class="tw-relative tw-overflow-hidden tw-rounded-xl"
       >
         <div class="tw-flex tw-items-center tw-gap-4">
           <div :class="['tw-rounded-lg tw-p-3']">
@@ -20,8 +20,8 @@
             </el-icon>
           </div>
           <div>
-            <div class="tw-text-sm tw-text-gray-600">{{ stat.title }}</div>
-            <div class="tw-mt-1 tw-text-2xl tw-font-bold tw-text-gray-800">
+            <div class="tw-text-base tw-text-sm">{{ stat.title }}</div>
+            <div class="tw-mt-1 tw-text-2xl tw-text-base tw-font-bold">
               {{ stat.value }}
             </div>
           </div>
@@ -29,16 +29,15 @@
         <div
           class="tw-absolute tw-bottom-0 tw-right-0 tw-translate-x-2 tw-translate-y-2 tw-opacity-10"
         >
-          <component :is="stat.icon" class="tw-text-6xl" />
-        </div>
-      </div>
+          <component :is="stat.icon" class="tw-text-6xl" /></div
+      ></el-card>
     </div>
 
     <div class="tw-min-h-0 tw-flex-1 tw-overflow-auto">
       <div class="tw-flex tw-h-full tw-flex-col tw-gap-4">
         <!-- 图表区域 -->
         <div class="tw-grid tw-h-full tw-grid-cols-2 tw-gap-4">
-          <el-card shadow="never" class="tw-flex tw-flex-col">
+          <el-card shadow="always" class="tw-flex tw-flex-col">
             <template #header>
               <div class="tw-flex tw-items-center tw-justify-between">
                 <span class="tw-font-medium">文章分类</span>
@@ -46,7 +45,7 @@
             </template>
             <div class="tw-h-full" ref="categoryChartRef"></div>
           </el-card>
-          <el-card shadow="never" class="tw-flex tw-flex-col">
+          <el-card shadow="always" class="tw-flex tw-flex-col">
             <template #header>
               <div class="tw-font-medium">最新评论</div>
             </template>
@@ -62,9 +61,11 @@
   import CommentList from "@/components/CommentList.vue"
   import { useGithubDiscussions } from "@/hooks/useGithubDiscussions"
   import { getPostStatistics } from "@/services/posts"
+  import { useThemeStore } from "@/stores/theme"
   import { Comment, Document, Star, View } from "@element-plus/icons-vue"
   import * as echarts from "echarts"
-  import { onMounted, ref } from "vue"
+  import { storeToRefs } from "pinia"
+  import { onMounted, ref, watch } from "vue"
 
   const categoryChartRef = ref()
 
@@ -74,38 +75,40 @@
       title: "文章总数",
       value: 0,
       icon: Document,
-      iconColor: "tw-text-blue-600",
-      iconBg: "tw-bg-blue-100",
-      bgColor: "tw-bg-gradient-to-br tw-from-blue-100 tw-to-blue-50"
+      iconColor: "tw-text-blue-500 dark:tw-text-blue-400",
+      iconBg: "tw-bg-blue-500/10 dark:tw-bg-blue-400/10",
+      bgColor:
+        "tw-bg-white dark:tw-bg-[#2a3b57] tw-shadow-lg tw-shadow-blue-500/5 dark:tw-shadow-blue-400/5 tw-border tw-border-blue-100/50 dark:tw-border-blue-500/10 tw-backdrop-blur-sm"
     },
     {
       title: "总阅读量",
       value: "0k",
       icon: View,
-      iconColor: "tw-text-green-600",
-      iconBg: "tw-bg-green-100",
-      bgColor: "tw-bg-gradient-to-br tw-from-green-100 tw-to-green-50"
+      iconColor: "tw-text-emerald-500 dark:tw-text-emerald-400",
+      iconBg: "tw-bg-emerald-500/10 dark:tw-bg-emerald-400/10",
+      bgColor:
+        "tw-bg-white dark:tw-bg-[#2a3b57] tw-shadow-lg tw-shadow-emerald-500/5 dark:tw-shadow-emerald-400/5 tw-border tw-border-emerald-100/50 dark:tw-border-emerald-500/10 tw-backdrop-blur-sm"
     },
     {
       title: "评论数",
       value: 0,
       icon: Comment,
-      iconColor: "tw-text-orange-600",
-      iconBg: "tw-bg-orange-100",
-      bgColor: "tw-bg-gradient-to-br tw-from-orange-100 tw-to-orange-50"
+      iconColor: "tw-text-amber-500 dark:tw-text-amber-400",
+      iconBg: "tw-bg-amber-500/10 dark:tw-bg-amber-400/10"
     },
     {
       title: "收藏数",
       value: 0,
       icon: Star,
-      iconColor: "tw-text-purple-600",
-      iconBg: "tw-bg-purple-100",
-      bgColor: "tw-bg-gradient-to-br tw-from-purple-100 tw-to-purple-50"
+      iconColor: "tw-text-violet-500 dark:tw-text-violet-400",
+      iconBg: "tw-bg-violet-500/10 dark:tw-bg-violet-400/10"
     }
   ])
 
   const initCategoryChart = (data: { value: number; name: string }[]) => {
     const chart = echarts.init(categoryChartRef.value)
+    // 清除之前的图表实例数据
+    chart.clear()
     chart.setOption({
       tooltip: {
         trigger: "item",
@@ -115,7 +118,10 @@
         orient: "horizontal",
         left: "center",
         bottom: "bottom",
-        icon: "circle"
+        icon: "circle",
+        textStyle: {
+          color: theme.value === "dark" ? "#fff" : "#000"
+        }
       },
       series: [
         {
@@ -127,7 +133,7 @@
           itemStyle: {
             borderRadius: 10,
             borderColor: "#fff",
-            borderWidth: 2
+            borderWidth: 1
           },
           label: {
             show: true,
@@ -178,13 +184,22 @@
     } catch (e) {
       console.error(error.value)
     }
-    await getStatistics()
 
     window.addEventListener("resize", () => {
       const categoryChart = echarts.getInstanceByDom(categoryChartRef.value)
       categoryChart?.resize()
     })
   })
+  const { theme } = storeToRefs(useThemeStore())
+  watch(
+    theme,
+    async () => {
+      await getStatistics()
+    },
+    {
+      immediate: true
+    }
+  )
 </script>
 
 <style lang="scss" scoped>
@@ -201,12 +216,10 @@
   }
 
   .el-card {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    @apply tw-shadow-lg tw-transition-all tw-duration-300;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      @apply tw-translate-y-[-2px] tw-shadow-2xl;
     }
   }
 </style>

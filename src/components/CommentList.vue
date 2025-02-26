@@ -36,7 +36,9 @@
             >
               {{ comment.discussionTitle }}
             </a>
-            <el-tag size="small" class="tw-ml-2">{{ comment.category.name }}</el-tag>
+            <el-tag size="small" class="tw-ml-2">{{
+              comment.category.name
+            }}</el-tag>
           </div>
         </div>
       </div>
@@ -45,10 +47,10 @@
 </template>
 
 <script setup lang="ts">
-import { formatDate } from "@/stores/date"
+  import { formatDate } from "@/utils/date"
 
-defineProps<{
-  comments: any[]
-  loading: boolean
-}>()
-</script> 
+  defineProps<{
+    comments: any[]
+    loading: boolean
+  }>()
+</script>

@@ -1,0 +1,165 @@
+@use "sass:map";
+@use "sass:color";
+$base-color: (
+  "light": (
+    "primary": #0052cc,
+    "success": #36b27e,
+    "warning": #ffab00,
+    "danger": #ff3030,
+    "error": #ff3030,
+    "info": #c5c8ce
+  ),
+  "dark": (
+    "primary": #4c9aff,
+    "success": #46a27b,
+    "warning": #e2a831,
+    "danger": #ce3b3b,
+    "error": #ce3b3b,
+    "info": #999
+  )
+) !default;
+
+$theme: map.deep-merge(
+  $base-color,
+  (
+    "light": (
+      "text": (
+        "base": #333,
+        "light": #666,
+        "primary": map.get($base-color, "light", "primary"),
+        "success": map.get($base-color, "light", "success"),
+        "warning": map.get($base-color, "light", "warning"),
+        "danger": map.get($base-color, "light", "danger"),
+        "error": map.get($base-color, "light", "error"),
+        "disabled": #999999,
+        "empty": #c5c8ce,
+        "active": #333,
+        "info": map.get($base-color, "light", "info")
+      ),
+      "background": (
+        "base": #fff,
+        "layout": #edf1f6,
+        "default": "#FAFAFA",
+        "light": #666666,
+        "primary": map.get($base-color, "light", "primary"),
+        "primary-alpha10": color.change(
+            map.get($base-color, "light", "primary"),
+            $alpha: 0.1
+          ),
+        "primary-alpha20": color.change(
+            map.get($base-color, "light", "primary"),
+            $alpha: 0.03
+          ),
+        "warning": map.get($base-color, "light", "warning"),
+        "warning-alpha10": color.change(
+            map.get($base-color, "light", "warning"),
+            $alpha: 0.1
+          ),
+        "danger": map.get($base-color, "light", "danger"),
+        "danger-alpha10": color.change(
+            map.get($base-color, "light", "danger"),
+            $alpha: 0.1
+          ),
+        "success": map.get($base-color, "light", "success"),
+        "success-alpha10": color.change(
+            map.get($base-color, "light", "success"),
+            $alpha: 0.1
+          ),
+        "form-label": #f5f6f6
+      ),
+      "border": (
+        "base": #dcdcdc,
+        "light": #666666,
+        "primary": map.get($base-color, "light", "primary"),
+        "primary-alpha10": color.change(
+            map.get($base-color, "light", "primary"),
+            $alpha: 0.4
+          ),
+        "danger": map.get($base-color, "light", "danger")
+      ),
+      "box-shadow": (
+        "light": rgba(0, 0, 0, 0.2),
+        "lighter": rgba(0, 0, 0, 0.08),
+        "dark": rgba(0, 0, 0, 0.2),
+        "primary-alpha10": color.change(
+            map.get($base-color, "light", "primary"),
+            $alpha: 0.16
+          ),
+        "danger-alpha10": color.change(
+            map.get($base-color, "light", "danger"),
+            $alpha: 0.16
+          )
+      )
+    ),
+    "dark": (
+      "text": (
+        "base": rgba(255, 255, 255, 0.7),
+        "light": rgba(255, 255, 255, 0.9),
+        "primary": map.get($base-color, "dark", "primary"),
+        "success": map.get($base-color, "dark", "success"),
+        "danger": map.get($base-color, "dark", "danger"),
+        "error": map.get($base-color, "dark", "error"),
+        "warning": map.get($base-color, "dark", "warning"),
+        "disabled": #999999,
+        "empty": #e0e3e7,
+        "active": #fff,
+        "info": map.get($base-color, "dark", "info")
+      ),
+      "background": (
+        "base": #2a3b57,
+        "layout": #1b2638,
+        "light": rgba(255, 255, 255, 0.9),
+        "primary": map.get($base-color, "dark", "primary"),
+        "primary-alpha10": color.change(
+            map.get($base-color, "dark", "primary"),
+            $alpha: 0.1
+          ),
+        "primary-alpha20": color.change(
+            map.get($base-color, "dark", "primary"),
+            $alpha: 0.03
+          ),
+        "warning": map.get($base-color, "dark", "warning"),
+        "warning-alpha10": color.change(
+            map.get($base-color, "dark", "warning"),
+            $alpha: 0.1
+          ),
+        "danger": map.get($base-color, "dark", "danger"),
+        "danger-alpha10": color.change(
+            map.get($base-color, "dark", "danger"),
+            $alpha: 0.1
+          ),
+        "success": map.get($base-color, "dark", "success"),
+        "success-alpha10": color.change(
+            map.get($base-color, "dark", "success"),
+            $alpha: 0.1
+          ),
+        "form-label": #223047
+      ),
+      "border": (
+        "base": #dcdcdc,
+        "light": rgba(255, 255, 255, 0.9),
+        "primary": map.get($base-color, "dark", "primary"),
+        "primary-alpha10": color.change(
+            map.get($base-color, "dark", "primary"),
+            $alpha: 0.4
+          ),
+        "danger": map.get($base-color, "dark", "danger")
+      ),
+      "box-shadow": (
+        "light": rgba(0, 0, 0, 0.2),
+        "lighter": rgba(0, 0, 0, 0.08),
+        "dark": rgba(0, 0, 0, 0.2),
+        "primary-alpha10": color.change(
+            map.get($base-color, "dark", "primary"),
+            $alpha: 0.16
+          ),
+        "danger-alpha10": color.change(
+            map.get($base-color, "dark", "danger"),
+            $alpha: 0.16
+          )
+      )
+    )
+  )
+);
+
+// 定义下element-plus的变量

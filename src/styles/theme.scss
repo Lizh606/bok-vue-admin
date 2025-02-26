@@ -1,0 +1,31 @@
+@use "sass:map";
+@use "vars";
+@use "mixins/function" as *;
+
+// :root[data-theme="light"] {
+//   $default-theme: map.get(vars.$theme, "light");
+//   @include setCssVarValue("primary", map.get($default-theme, "primary"));
+//   @include setCssVarValue("success", map.get($default-theme, "success"));
+//   @include setCssVarValue("warning", map.get($default-theme, "warning"));
+//   @include setCssVarValue("danger", map.get($default-theme, "danger"));
+//   @include setCssVarValue("error", map.get($default-theme, "error"));
+//   @include setCssVarSet("text", $default-theme);
+//   @include setCssVarSet("background", $default-theme);
+//   @include setCssVarSet("border", $default-theme);
+//   @include setCssVarSet("box-shadow", $default-theme);
+// }
+
+@each $theme, $value in vars.$theme {
+  :root[data-theme="#{$theme}"] {
+    @include setCssVarValue("primary", map.get($value, "primary"));
+    @include setCssVarValue("success", map.get($value, "success"));
+    @include setCssVarValue("warning", map.get($value, "warning"));
+    @include setCssVarValue("danger", map.get($value, "danger"));
+    @include setCssVarValue("error", map.get($value, "error"));
+    @include setCssVarValue("info", map.get($value, "info"));
+    @include setCssVarSet("text", $value);
+    @include setCssVarSet("background", $value);
+    @include setCssVarSet("border", $value);
+    @include setCssVarSet("box-shadow", $value);
+  }
+}

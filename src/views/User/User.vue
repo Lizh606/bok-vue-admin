@@ -1,7 +1,7 @@
 <template>
-  <div class="tw-flex tw-flex-col tw-gap-4">
+  <div class="tw-bg-base tw-flex tw-flex-col tw-gap-4">
     <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-text-xl tw-font-bold">用户管理</div>
+      <div class="tw-text-light tw-text-2xl tw-font-bold">用户管理</div>
       <el-button type="primary" @click="openDialog('add')" v-if="isAdmin">
         <el-icon class="tw-mr-1"><Plus /></el-icon>新增用户
       </el-button>
@@ -9,7 +9,12 @@
 
     <el-card class="tw-min-h-0 tw-flex-1" shadow="never">
       <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
-        <el-table :data="tableData" :height="tableHeight" style="width: 100%">
+        <el-table
+          border
+          :data="tableData"
+          :height="tableHeight"
+          style="width: 100%"
+        >
           <el-table-column prop="id" label="ID" width="80" align="center" />
           <!-- <el-table-column width="80" align="center">
             <template #default="scope">
@@ -33,7 +38,7 @@
                 v-for="role in scope.row.roles"
                 :key="role.id"
                 class="tw-mx-1"
-                :type="role.name === 'admin' ? 'danger' : 'info'"
+                :type="role.name === '管理员' ? 'danger' : 'info'"
               >
                 {{ role.name }}
               </el-tag>
@@ -181,17 +186,10 @@
 
 <style lang="scss" scoped>
   :deep(.el-card) {
-    border: 1px solid #ebeef5;
-    background-color: #fff;
-    color: #303133;
-    transition: 0.3s;
-    padding: 16px;
+    @apply tw-border-none tw-p-4 tw-text-base tw-transition-[0.3s];
 
     .el-card__body {
-      padding: 0;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
+      @apply tw-flex tw-h-full tw-flex-col tw-p-0;
     }
   }
 </style>

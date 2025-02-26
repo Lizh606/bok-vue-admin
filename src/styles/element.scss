@@ -1,0 +1,117 @@
+/* 定义 SCSS 变量 */
+@use "./vars";
+@use "sass:map";
+@use "./mixins/function" as *;
+
+@each $theme, $value in vars.$theme {
+  :root[data-theme="#{$theme}"] {
+    // 基础颜色
+    --el-color-white: #ffffff;
+    --el-color-black: #000000;
+
+    // 主题色
+    --el-color-primary: #{getCssVar("primary")};
+    --el-color-success: #{getCssVar("success")};
+    --el-color-warning: #{getCssVar("warning")};
+    --el-color-danger: #{getCssVar("danger")};
+    --el-color-error: #{getCssVar("error")};
+    --el-color-info: #{getCssVar("info")};
+
+    // // RGB 值
+    // --el-color-primary-rgb: #{red(getCssVar("text", "primary"))},
+    //   #{green(getCssVar("text", "primary"))},
+    //   #{blue(getCssVar("text", "primary"))};
+    // --el-color-success-rgb: #{red(getCssVar("text", "success"))},
+    //   #{green(getCssVar("text", "success"))},
+    //   #{blue(getCssVar("text", "success"))};
+    // --el-color-warning-rgb: #{red(getCssVar("text", "warning"))},
+    //   #{green(getCssVar("text", "warning"))},
+    //   #{blue(getCssVar("text", "warning"))};
+    // --el-color-danger-rgb: #{red(getCssVar("text", "danger"))},
+    //   #{green(getCssVar("text", "danger"))},
+    //   #{blue(getCssVar("text", "danger"))};
+    // --el-color-error-rgb: #{red(getCssVar("text", "error"))},
+    //   #{green(getCssVar("text", "error"))}, #{blue(getCssVar("text", "error"))};
+    // --el-color-info-rgb: #{red(getCssVar("text", "empty"))},
+    //   #{green(getCssVar("text", "empty"))}, #{blue(getCssVar("text", "empty"))};
+
+    // 背景色
+    --el-bg-color: #{getCssVar("background", "base")};
+    --el-bg-color-page: #{getCssVar("background", "layout")};
+    --el-bg-color-overlay: #{getCssVar("background", "base")};
+
+    // 文本色
+    --el-text-color-primary: #{getCssVar("text", "base")};
+    --el-text-color-regular: #{getCssVar("text", "light")};
+    --el-text-color-light: #{getCssVar("text", "primary")};
+    --el-text-color-secondary: #{getCssVar("text", "empty")};
+    --el-text-color-placeholder: #{getCssVar("text", "empty")};
+    --el-text-color-disabled: #{getCssVar("text", "disabled")};
+
+    // 边框色
+    --el-border-color: #{getCssVar("border", "base")};
+    --el-border-color-light: #{getCssVar("border", "light")};
+    --el-border-color-lighter: #{getCssVar("border", "base")};
+    --el-border-color-extra-light: #{getCssVar("border", "base")};
+    --el-border-color-dark: #{getCssVar("border", "base")};
+    --el-border-color-darker: #{getCssVar("border", "base")};
+
+    // 填充色
+    --el-fill-color: #{getCssVar("background", "form-label")};
+    --el-fill-color-light: #{getCssVar("background", "form-label")};
+    --el-fill-color-lighter: #{getCssVar("background", "form-label")};
+    --el-fill-color-extra-light: #{getCssVar("background", "form-label")};
+    --el-fill-color-dark: #{getCssVar("background", "form-label")};
+    --el-fill-color-darker: #{getCssVar("background", "form-label")};
+    --el-fill-color-blank: #{getCssVar("background", "base")};
+
+    // 主题色的不同亮度
+    --el-color-primary-dark-2: #{getCssVar("background", "primary-alpha10")};
+    --el-color-primary-light-3: #{getCssVar("background", "primary-alpha10")};
+    --el-color-primary-light-5: #{getCssVar("background", "primary-alpha20")};
+    --el-color-primary-light-7: #{getCssVar("background", "primary-alpha10")};
+    --el-color-primary-light-8: #{getCssVar("background", "primary-alpha20")};
+    --el-color-primary-light-9: #{getCssVar("background", "primary-alpha10")};
+
+    // 阴影
+    --el-box-shadow: #{getCssVar("box-shadow", "light")};
+    --el-box-shadow-light: #{getCssVar("box-shadow", "lighter")};
+    --el-box-shadow-lighter: #{getCssVar("box-shadow", "lighter")};
+    --el-box-shadow-dark: #{getCssVar("box-shadow", "dark")};
+
+    // 禁用状态
+    --el-disabled-bg-color: #{getCssVar("background", "form-label")};
+    --el-disabled-text-color: #{getCssVar("text", "disabled")};
+    --el-disabled-border-color: #{getCssVar("border", "base")};
+
+    // 遮罩层
+    --el-overlay-color: rgba(0, 0, 0, 0.8);
+    --el-overlay-color-light: rgba(0, 0, 0, 0.7);
+    --el-overlay-color-lighter: rgba(0, 0, 0, 0.5);
+    --el-mask-color: rgba(255, 255, 255, 0.9);
+    --el-mask-color-extra-light: rgba(255, 255, 255, 0.3);
+
+    // 其他
+    .is-link:hover {
+      font-weight: 700;
+      // 继承原来的颜色
+      color: inherit;
+    }
+    .el-table th.el-table__cell {
+      background-color: #{getCssVar("background", "base")} !important;
+      color: #{getCssVar("text", "base")} !important;
+    }
+    .el-menu-item.is-active {
+      background-color: #{getCssVar(
+          "background",
+          "primary-alpha10"
+        )} !important;
+    }
+    .el-menu-item:hover {
+      background-color: #{getCssVar(
+          "background",
+          "primary-alpha20"
+        )} !important;
+    }
+  }
+}

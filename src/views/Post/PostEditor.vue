@@ -4,13 +4,13 @@
     ref="containerRef"
   >
     <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-font-serif tw-text-2xl tw-text-gray-800">
+      <div class="tw-text-light tw-font-serif tw-text-2xl">
         {{ isEdit ? "编辑文章" : "写文章" }}
       </div>
       <div class="tw-flex tw-gap-3">
         <el-button @click="$router.back()">返回</el-button>
         <el-button
-          class="blog-btn"
+          class="tw-bg-primary hover:tw-bg-primary-alpha10 tw-border-none tw-font-bold"
           @click="handleSubmit"
           v-if="isAdmin || !route.query.id"
         >
@@ -175,7 +175,6 @@
   // 初始化表单数据
   const initFormData = async () => {
     const id = route.query.id
-    console.log(route)
     if (id) {
       isEdit.value = true
       try {
@@ -255,18 +254,6 @@
       height: 100%;
       padding: 16px;
       overflow: auto;
-    }
-  }
-
-  .blog-btn {
-    background-color: #3b82f6;
-    border: none;
-    padding: 10px 20px;
-    font-weight: 500;
-    color: #fff;
-
-    &:hover {
-      background-color: #2563eb;
     }
   }
 

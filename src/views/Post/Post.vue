@@ -1,13 +1,35 @@
 <template>
   <div class="tw-flex tw-flex-col tw-gap-4">
     <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-text-xl tw-font-bold">文章管理</div>
+      <div class="tw-text-light tw-text-2xl tw-font-bold">文章管理</div>
       <el-button type="primary" @click="openDialog('add')" v-if="isAdmin">
         <el-icon class="tw-mr-1"><Plus /></el-icon>新增文章
       </el-button>
     </div>
 
     <el-card class="tw-min-h-0 tw-flex-1" shadow="never">
+      <div class="tw-mb-4">
+        <el-alert
+          v-if="userInfo.username === 'visitor'"
+          type="warning"
+          :closable="false"
+          class="tw-mb-4"
+        >
+          <template #title>
+            <div class="tw-flex tw-items-center tw-gap-2">
+              <el-icon><Warning /></el-icon>
+              <span>访客提示</span>
+            </div>
+          </template>
+          <div class="tw-mt-2">
+            当前为游客访问模式，暂无查看编辑权限。您可以访问
+            <el-link href="https://wanyue.me/" target="_blank" type="primary">
+              🔗博客
+            </el-link>
+            查看已发布的文章。
+          </div>
+        </el-alert>
+      </div>
       <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
         <el-table
           :data="tableData"
@@ -65,12 +87,14 @@
                 link
                 type="primary"
                 @click="openDialog('edit', scope.row)"
+                class="hover:tw-text-primary tw-font-bold"
                 >编辑</el-button
               >
               <el-button
                 v-if="isAdmin"
                 link
                 type="danger"
+                class="tw-text-danger"
                 @click="openDialog('delete', scope.row)"
                 >删除</el-button
               >
@@ -106,11 +130,11 @@
   import { getPostList } from "@/services/posts"
   import { getUserProfile, type Role } from "@/services/user"
   import { useAppStore } from "@/stores/app"
-  import { Plus } from "@element-plus/icons-vue"
+  import { Plus, Warning } from "@element-plus/icons-vue"
   import { computed, onMounted, ref, watch } from "vue"
   import { useRouter } from "vue-router"
   import DeleteDialog from "./dialogs/DeleteDialog.vue"
-
+  const { userInfo } = useAppStore()
   // table元素
   const tableRef = ref()
   // table高度
@@ -181,55 +205,34 @@
 
 <style lang="scss" scoped>
   :deep(.el-card) {
-    border: 1px solid #ebeef5;
-    background-color: #fff;
-    color: #303133;
-    transition: 0.3s;
-    padding: 16px;
-
+    @apply tw-bg-base tw-border-none tw-p-4 tw-text-base tw-transition-[0.3s];
     .el-card__body {
-      padding: 0;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  .blog-btn {
-    background-color: #3b82f6;
-    border: none;
-    padding: 10px 20px;
-    font-weight: 500;
-
-    &:hover {
-      background-color: #2563eb;
+      @apply tw-flex tw-h-full tw-flex-col tw-p-0;
     }
   }
 
   :deep(.el-table) {
-    border-radius: 8px;
-    overflow: hidden;
+    @apply tw-overflow-hidden tw-rounded-lg;
 
     .el-table__header-wrapper {
-      border-bottom: 1px solid #e5e7eb;
+      @apply tw-border-base tw-border-b tw-border-solid;
     }
 
     .el-button--link {
-      font-weight: 500;
-      padding: 4px 8px;
+      @apply tw-px-2 tw-py-1 tw-font-bold;
     }
   }
 
   :deep(.el-pagination) {
     .el-pagination__sizes {
-      margin-right: 16px;
+      @apply tw-mr-4;
     }
 
     .el-pager li {
-      border-radius: 4px;
+      @apply tw-rounded-md;
 
       &.is-active {
-        background-color: #3b82f6;
+        @apply tw-bg-primary;
       }
     }
   }

@@ -1,0 +1,135 @@
+@use "sass:map";
+
+/**
+ * 连接CSS变量名
+ * @param {List} $list - 要连接的变量名部分列表
+ * @param {String} $prefix - 变量前缀，默认为"wanyue"
+ * @return {String} 完整的CSS变量名
+ */
+@function joinVarName($list, $prefix: "wanyue") {
+  $name: "--" + $prefix;
+  @each $item in $list {
+    @if $item != "" {
+      $name: $name + "-" + $item;
+    }
+  }
+  @return $name;
+}
+
+/**
+ * 从Sass映射中获取变量值
+ * @param {Map} $map - Sass映射对象
+ * @param {String} $key - 要获取的键
+ * @return {*} 映射中键对应的值
+ */
+@function getSassVar($map, $key) {
+  @return map.get($map, $key);
+}
+
+/**
+ * 获取CSS变量
+ * 例如: getCssVar('button', 'text-color') => var(--oms-button-text-color)
+ * @param {List} $args - 变量名部分列表
+ * @return {String} 完整的CSS变量引用
+ */
+@function getCssVar($args...) {
+  @return var(#{joinVarName($args)});
+}
+
+/**
+ * 设置CSS变量值
+ * 例如: @include setCssVarValue(('color', 'primary'), red);
+ * 输出: --oms-color-primary: red;
+ * @param {List} $name - 变量名部分列表
+ * @param {*} $value - 要设置的值
+ */
+@mixin setCssVarValue($name, $value) {
+  #{joinVarName($name)}: #{$value};
+}
+
+/**
+ * 设置一组CSS变量
+ * 例如: @include setCssVarSet("text", ("text":("base":#333,"strong":black)));
+ * 输出: --oms-text-base: #333;--oms-text-strong: black;
+ * @param {String} $namespace - 变量命名空间
+ * @param {Map} $set - 包含变量的映射
+ */
+@mixin setCssVarSet($namespace, $set) {
+  @each $type in map.keys(map.get($set, $namespace)) {
+    @include setCssVarValue(
+      ($namespace, $type),
+      map.get($set, $namespace, $type)
+    );
+  }
+}
+
+/**
+ * 设置字体样式
+ * @param {Length} $size - 字体大小，默认为基础字体大小
+ * @param {Boolean} $isBold - 是否加粗，默认为false
+ * @param {Color} $color - 字体颜色，默认为基础文本颜色
+ */
+@mixin font(
+  $size: map.get(vars.$font-size, "base"),
+  $isBold: false,
+  $color: getCssVar("text", "base")
+) {
+  font-size: $size;
+  @if $isBold {
+    font-weight: bold;
+  }
+  color: $color;
+}
+
+/**
+ * 骨架屏加载动画关键帧
+ */
+@keyframes ivuSkeletonMove {
+  from {
+    background-position: 100% 50%;
+  }
+  to {
+    background-position: 0 50%;
+  }
+}
+
+/**
+ * 骨架屏加载公共样式占位符
+ */
+%skeleton-loading__public {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/**
+ * 创建骨架屏加载效果
+ * 添加加载动画和背景渐变
+ */
+@mixin skeleton-loading {
+  position: relative;
+  &::before {
+    @extend %skeleton-loading__public;
+    z-index: 10;
+    background-image: linear-gradient(
+      90deg,
+      getCssVar("background", "base") 0,
+      getCssVar("background", "base") 100%
+    );
+  }
+  &::after {
+    @extend %skeleton-loading__public;
+    z-index: 20;
+    background-image: linear-gradient(
+      90deg,
+      rgba(190, 190, 190, 0.2) 25%,
+      rgba(129, 129, 129, 0.24) 37%,
+      rgba(190, 190, 190, 0.2) 63%
+    );
+    background-size: 400% 100%;
+    animation: ivuSkeletonMove 1.4s ease infinite;
+  }
+}

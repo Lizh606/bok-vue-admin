@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="tw-flex tw-flex-col tw-gap-4 tw-bg-[#2c3e50] tw-py-4 tw-text-white"
-  >
+  <div class="tw-bg-base tw-flex tw-flex-col tw-gap-4 tw-py-4">
     <!-- <el-radio-group v-model="isCollapse" class="tw-absolute tw-left-24">
       <el-radio-button :value="true">expand</el-radio-button>
       <el-radio-button :value="false">collapse</el-radio-button>
@@ -12,21 +10,21 @@
         v-show="!isCollapse"
       >
         <el-icon @click="isCollapse = !isCollapse">
-          <WindPower class="tw-cursor-pointer tw-text-white" />
+          <WindPower class="tw-text-primary tw-cursor-pointer" />
         </el-icon>
-        <span class="tw-text-xl tw-font-bold">博客运维</span>
+        <span class="tw-text-primary tw-text-2xl tw-font-bold">运维管理</span>
       </div>
       <el-icon @click="isCollapse = !isCollapse" v-show="isCollapse">
-        <Expand class="tw-cursor-pointer tw-text-white" />
+        <Expand class="tw-cursor-pointer" />
       </el-icon>
     </div>
     <el-menu
-      active-text-color="#42b983"
-      background-color="#2c3e50"
+      active-text-color="var(--wanyue-text-primary)"
+      background-color="var(--wanyue-background-base)"
       class="tw-min-h-0 tw-w-[220px] tw-flex-1"
       :default-active="menuActive"
       :collapse="isCollapse"
-      text-color="#fff"
+      text-color="var(--wanyue-text-base)"
       @select="handleSelect"
     >
       <el-menu-item
@@ -43,14 +41,14 @@
 
     <div class="tw-flex tw-items-center tw-gap-2 tw-px-4">
       <div
-        class="tw-flex tw-h-8 tw-w-8 tw-items-center tw-overflow-hidden tw-rounded-full tw-border tw-border-solid tw-border-[#eee] tw-shadow-sm"
+        class="tw-border-base tw-flex tw-h-8 tw-w-8 tw-items-center tw-overflow-hidden tw-rounded-full tw-border tw-border-solid tw-shadow-sm"
       >
         <img
           src="@/assets/ava.jpg"
           class="tw-h-full tw-w-full tw-object-cover"
         />
       </div>
-      <span v-show="!isCollapse">{{ userName }}</span>
+      <span v-show="!isCollapse">Welcome back 😇</span>
     </div>
   </div>
 </template>
@@ -59,11 +57,11 @@
   import router from "@/router"
   import { useAppStore } from "@/stores/app"
   import {
-    Expand,
-    WindPower,
-    Histogram,
     Document,
-    User
+    Expand,
+    Histogram,
+    User,
+    WindPower
   } from "@element-plus/icons-vue"
   import { computed, ref } from "vue"
   import { useRoute } from "vue-router"
