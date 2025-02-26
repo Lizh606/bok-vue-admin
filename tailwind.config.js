@@ -1,4 +1,9 @@
 /** @type {import('tailwindcss').Config} */
+import {
+  createVariableColors,
+  variableColorsPlugin
+} from "tailwindcss-variable-colors"
+import colors from "tailwindcss/colors"
 import { getCssVar } from "./src/utils/cssFunc.ts"
 module.exports = {
   prefix: "tw-",
@@ -20,6 +25,7 @@ module.exports = {
         kaiti: "var(--font-family-kaiti)"
       },
       colors: {
+        ...createVariableColors(colors),
         primary: getCssVar("text", "primary"),
         success: getCssVar("text", "success"),
         warning: getCssVar("text", "warning"),
@@ -74,6 +80,6 @@ module.exports = {
   corePlugins: {
     preflight: false
   },
-  plugins: [],
+  plugins: [variableColorsPlugin(colors)],
   safelist: []
 }
