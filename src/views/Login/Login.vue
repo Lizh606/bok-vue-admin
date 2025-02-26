@@ -1,15 +1,13 @@
 <template>
   <div
-    class="login-container tw-bg-base tw-flex tw-min-h-screen tw-items-center tw-justify-center tw-px-4 tw-py-12 sm:tw-px-6 lg:tw-px-8"
+    class="login-container tw-flex tw-min-h-screen tw-items-center tw-justify-center tw-bg-base tw-px-4 tw-py-12 sm:tw-px-6 lg:tw-px-8"
   >
     <div
-      class="login-box tw-w-full tw-max-w-md tw-space-y-8 tw-rounded-lg tw-bg-white tw-p-8 tw-shadow-lg"
+      class="login-box tw-w-full tw-max-w-md tw-space-y-8 tw-rounded-lg tw-bg-base tw-p-8 tw-shadow-lg"
     >
       <div class="tw-text-center">
-        <h2 class="tw-mb-2 tw-text-3xl tw-font-bold tw-text-gray-900">
-          欢迎回来
-        </h2>
-        <p class="tw-text-gray-600">登录后开始您的博客运维</p>
+        <h2 class="tw-mb-2 tw-text-3xl tw-font-bold tw-text-light">欢迎回来</h2>
+        <p class="tw-text-light">登录后开始您的博客运维</p>
       </div>
 
       <el-form
