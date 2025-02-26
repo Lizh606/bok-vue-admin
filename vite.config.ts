@@ -26,6 +26,11 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [tailwindcss, autoprefixer]
+    },
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler"
+      }
     }
   },
   server: {
