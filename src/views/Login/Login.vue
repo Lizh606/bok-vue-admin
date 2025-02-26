@@ -47,7 +47,7 @@
             class="tw-w-full"
             size="large"
             :loading="loading"
-            @click="handleLogin"
+            @click="handleLogin(false)"
             >登录</el-button
           >
         </div>
@@ -70,6 +70,7 @@
   import router from "@/router"
   import { login } from "@/services"
   import { Lock, User } from "@element-plus/icons-vue"
+  import { ElMessage } from "element-plus"
   import { ref } from "vue"
 
   const loading = ref(false)
@@ -87,26 +88,20 @@
   const loginFormRef = ref()
 
   const handleLogin = async (isGuest?: boolean) => {
-    if (isGuest) {
-      loading.value = true
-      try {
-        await login({ username: "visitor", password: "123456" })
-        router.push("/")
-      } catch (error) {
-        console.error(error)
-      } finally {
-        loading.value = false
-      }
-      return
-    }
+    loading.value = true
 
     loginFormRef.value.validate(async (valid: boolean) => {
       if (valid) {
         loading.value = true
         try {
-          await login(loginForm.value)
+          const loginInfo = isGuest
+            ? { username: "visitor", password: "123456" }
+            : loginForm.value
+          console.log(loginInfo)
+          await login(loginInfo)
           router.push("/")
         } catch (error) {
+          ElMessage.error("登录失败")
           console.error(error)
         } finally {
           loading.value = false
