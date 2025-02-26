@@ -1,57 +1,140 @@
 <template>
-  <div class="tw-flex tw-h-full tw-w-full tw-items-center tw-justify-center">
-    <el-form
-      ref="loginFormRef"
-      :model="loginForm"
-      :rules="rules"
-      label-width="80px"
+  <div
+    class="login-container tw-bg-base tw-flex tw-min-h-screen tw-items-center tw-justify-center tw-px-4 tw-py-12 sm:tw-px-6 lg:tw-px-8"
+  >
+    <div
+      class="login-box tw-w-full tw-max-w-md tw-space-y-8 tw-rounded-lg tw-bg-white tw-p-8 tw-shadow-lg"
     >
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="loginForm.username"></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input type="password" v-model="loginForm.password"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="handleLogin">登录</el-button>
-      </el-form-item>
-    </el-form>
+      <div class="tw-text-center">
+        <h2 class="tw-mb-2 tw-text-3xl tw-font-bold tw-text-gray-900">
+          欢迎回来
+        </h2>
+        <p class="tw-text-gray-600">登录后开始您的博客运维</p>
+      </div>
+
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="rules"
+        class="tw-space-y-6"
+      >
+        <el-form-item prop="username">
+          <el-input
+            v-model="loginForm.username"
+            placeholder="用户名"
+            :prefix-icon="User"
+            size="large"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item prop="password">
+          <el-input
+            v-model="loginForm.password"
+            type="password"
+            placeholder="密码"
+            :prefix-icon="Lock"
+            size="large"
+            show-password
+          ></el-input>
+        </el-form-item>
+
+        <div class="tw-flex tw-items-center tw-justify-between">
+          <el-checkbox v-model="loginForm.remember">记住我</el-checkbox>
+          <el-link type="primary" :underline="false">忘记密码？</el-link>
+        </div>
+
+        <div>
+          <el-button
+            type="primary"
+            class="tw-w-full"
+            size="large"
+            :loading="loading"
+            @click="handleLogin"
+            >登录</el-button
+          >
+        </div>
+        <div>
+          <el-button
+            type="info"
+            class="tw-w-full"
+            size="large"
+            plain
+            @click="handleLogin(true)"
+            >游客访问</el-button
+          >
+        </div>
+      </el-form>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
   import router from "@/router"
   import { login } from "@/services"
-  import { useAppStore } from "@/stores/app"
+  import { Lock, User } from "@element-plus/icons-vue"
   import { ref } from "vue"
+
+  const loading = ref(false)
   const loginForm = ref({
     username: "",
-    password: ""
+    password: "",
+    remember: false
   })
 
   const rules = {
     username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
     password: [{ required: true, message: "请输入密码", trigger: "blur" }]
   }
+
   const loginFormRef = ref()
-  // const router =useRouter()
-  const handleLogin = async () => {
+
+  const handleLogin = async (isGuest?: boolean) => {
+    if (isGuest) {
+      loading.value = true
+      try {
+        await login({ username: "visitor", password: "123456" })
+        router.push("/")
+      } catch (error) {
+        console.error(error)
+      } finally {
+        loading.value = false
+      }
+      return
+    }
+
     loginFormRef.value.validate(async (valid: boolean) => {
       if (valid) {
+        loading.value = true
         try {
-          // 执行登录逻辑，例如发送登录请求
-          const data = await login(loginForm.value)
-          useAppStore().$patch({ userInfo: loginForm.value })
-          console.log("登录成功")
+          await login(loginForm.value)
           router.push("/")
         } catch (error) {
           console.error(error)
+        } finally {
+          loading.value = false
         }
-      } else {
-        console.log("登录失败，请检查输入")
       }
     })
   }
 </script>
 
-<style scoped></style>
+<style scoped>
+  .login-container {
+    background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  }
+
+  .login-box {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
