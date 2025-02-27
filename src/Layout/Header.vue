@@ -1,6 +1,6 @@
 <template>
   <div
-    class="tw-bg-base tw-flex tw-h-14 tw-items-center tw-justify-between tw-px-4 tw-shadow-sm"
+    class="tw-flex tw-h-14 tw-items-center tw-justify-between tw-bg-base tw-px-4 tw-shadow-sm"
   >
     <div class="tw-flex tw-items-center tw-gap-2">
       <el-icon size="20"><HomeFilled /></el-icon>
@@ -105,7 +105,7 @@
     router.push("/login")
   }
   const goToWebsite = () => {
-    window.open("https://hang.izeper.icu/", "_blank")
+    window.open("https://wanyue.me/", "_blank")
   }
   const createPost = () => {
     router.push("/article/edit")
