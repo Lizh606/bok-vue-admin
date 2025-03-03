@@ -8,6 +8,22 @@
     </div>
 
     <el-card class="tw-min-h-0 tw-flex-1" shadow="never">
+      <div class="tw-mb-4">
+        <el-alert
+          v-if="!isAdmin"
+          type="warning"
+          :closable="false"
+          class="tw-mb-4"
+        >
+          <template #title>
+            <div class="tw-flex tw-items-center tw-gap-2">
+              <el-icon><Warning /></el-icon>
+              <span>访客提示</span>
+            </div>
+          </template>
+          <div class="tw-mt-2">当前为游客访问模式，暂无编辑权限。</div>
+        </el-alert>
+      </div>
       <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
         <el-table
           border
@@ -60,7 +76,12 @@
               />
             </template>
           </el-table-column> -->
-          <el-table-column label="操作" width="180" align="center">
+          <el-table-column
+            label="操作"
+            width="180"
+            align="center"
+            v-if="isAdmin"
+          >
             <template #default="scope">
               <el-link
                 @click="openDialog('edit', scope.row)"
@@ -69,11 +90,7 @@
               >
                 编辑
               </el-link>
-              <el-link
-                v-if="isAdmin"
-                @click="openDialog('delete', scope.row)"
-                type="danger"
-              >
+              <el-link @click="openDialog('delete', scope.row)" type="danger">
                 删除
               </el-link>
             </template>
@@ -112,12 +129,12 @@
   import useTablePagination from "@/hooks/useTablePagination"
   import { getUserListByPage, type Role, type User } from "@/services/user"
   import { useAppStore } from "@/stores/app"
-  import { Plus } from "@element-plus/icons-vue"
+  import { Plus, Warning } from "@element-plus/icons-vue"
   import { computed, onMounted, ref } from "vue"
   import { USER_DIALOG_TITLE } from "./common"
   import DeleteDialog from "./dialogs/DeleteDialog.vue"
   import OperateDialog from "./dialogs/OperateDialog.vue"
-
+  const { userInfo } = useAppStore()
   // table元素
   const tableRef = ref()
   // table高度
@@ -136,7 +153,6 @@
     })
 
   const isAdmin = computed(() => {
-    const userInfo = useAppStore().userInfo
     return userInfo.roles && userInfo.roles.some((item: Role) => item.id === 1)
   })
   const addDialog = ref(false)
@@ -165,15 +181,6 @@
         break
     }
   }
-
-  // const handleStatusChange = async (row: User) => {
-  //   try {
-  //     // 这里添加修改用户状态的接口调用
-  //     ElMessage.success("状态修改成功")
-  //   } catch (error) {
-  //     ElMessage.error("状态修改失败")
-  //   }
-  // }
 
   onMounted(() => {
     tableHeight.value = tableRef.value.offsetHeight
