@@ -10,7 +10,7 @@
     <el-card class="tw-min-h-0 tw-flex-1" shadow="never">
       <div class="tw-mb-4">
         <el-alert
-          v-if="userInfo.username === 'visitor'"
+          v-if="!isAdmin"
           type="warning"
           :closable="false"
           class="tw-mb-4"
@@ -162,7 +162,6 @@
   const currentFormData = ref()
   const router = useRouter()
   const isAdmin = computed(() => {
-    const userInfo = useAppStore().userInfo
     return userInfo.roles && userInfo.roles.some((item: Role) => item.id === 1)
   })
   const openDialog = (type: string, data?: any) => {

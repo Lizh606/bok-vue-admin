@@ -12,21 +12,23 @@
         <el-button
           class="tw-border-none tw-bg-primary tw-font-bold hover:tw-bg-primary-alpha10"
           @click="handleSubmit"
-          v-if="isAdmin || !route.query.id"
+          v-if="isAdmin"
         >
           <el-icon class="tw-mr-1"><DocumentAdd /></el-icon>发布
         </el-button>
       </div>
     </div>
 
-    <el-form
-      ref="formRef"
-      :model="formData"
-      :rules="rules"
-      label-position="top"
-      class="tw-min-h-0 tw-flex-1"
+    <el-card
+      class="tw-min-h-0 tw-flex-1 tw-overflow-auto tw-rounded-lg tw-border tw-border-solid tw-border-base tw-bg-base tw-text-base tw-shadow-lg tw-transition-[0.3s]"
+      shadow="hover"
     >
-      <el-card class="blog-card" shadow="hover">
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-position="top"
+      >
         <el-form-item label="文章标题" prop="title">
           <el-input
             v-model="formData.title"
@@ -102,8 +104,8 @@
           <!-- <BlogEditor v-model="formData.content" class="tw-mb-4" /> -->
           <el-input v-model="formData.content" type="textarea" :rows="15" />
         </el-form-item>
-      </el-card>
-    </el-form>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -242,50 +244,7 @@
 </script>
 
 <style lang="scss" scoped>
-  .blog-card {
-    @apply tw-h-full tw-rounded-lg tw-border tw-border-solid tw-border-base tw-bg-base tw-p-4 tw-text-base tw-shadow-lg tw-transition-[0.3s];
-    :deep(.el-card__body) {
-      @apply tw-h-full tw-overflow-auto tw-p-4;
-    }
+  :deep(.el-card) {
+    @apply tw-overflow-auto #{!important};
   }
-
-  // :deep(.el-form-item__label) {
-  //   font-weight: 500;
-  //   color: #374151;
-  //   padding-bottom: 8px;
-  // }
-
-  // :deep(.el-input) {
-  //   .el-input__wrapper {
-  //     box-shadow: 0 0 0 1px #e5e7eb inset;
-
-  //     &:hover {
-  //       box-shadow: 0 0 0 1px #d1d5db inset;
-  //     }
-
-  //     &.is-focus {
-  //       box-shadow: 0 0 0 2px #3b82f6 inset;
-  //     }
-  //   }
-  // }
-
-  // :deep(.el-select) {
-  //   .el-input__wrapper {
-  //     box-shadow: 0 0 0 1px #e5e7eb inset;
-
-  //     &:hover {
-  //       box-shadow: 0 0 0 1px #d1d5db inset;
-  //     }
-  //   }
-  // }
-
-  // :deep(.el-form-item.is-error) {
-  //   .el-input__wrapper {
-  //     box-shadow: 0 0 0 1px #f56c6c inset;
-  //   }
-
-  //   .v-md-editor {
-  //     border-color: #f56c6c;
-  //   }
-  // }
 </style>
