@@ -1,16 +1,16 @@
 <template>
   <div
-    class="loadingDom tw-flex tw-h-full tw-flex-col tw-gap-6"
+    class="tw-flex tw-h-full tw-flex-col tw-gap-6 tw-bg-base"
     ref="containerRef"
   >
     <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-text-light tw-font-serif tw-text-2xl">
+      <div class="tw-font-serif tw-text-2xl tw-text-light">
         {{ isEdit ? "编辑文章" : "写文章" }}
       </div>
       <div class="tw-flex tw-gap-3">
         <el-button @click="$router.back()">返回</el-button>
         <el-button
-          class="tw-bg-primary hover:tw-bg-primary-alpha10 tw-border-none tw-font-bold"
+          class="tw-border-none tw-bg-primary tw-font-bold hover:tw-bg-primary-alpha10"
           @click="handleSubmit"
           v-if="isAdmin || !route.query.id"
         >
@@ -243,70 +243,49 @@
 
 <style lang="scss" scoped>
   .blog-card {
-    border: 1px solid #ebeef5;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    color: #303133;
-    transition: 0.3s;
-    height: 100%;
+    @apply tw-h-full tw-rounded-lg tw-border tw-border-solid tw-border-base tw-bg-base tw-p-4 tw-text-base tw-shadow-lg tw-transition-[0.3s];
     :deep(.el-card__body) {
-      height: 100%;
-      padding: 16px;
-      overflow: auto;
+      @apply tw-h-full tw-overflow-auto tw-p-4;
     }
   }
 
-  :deep(.el-form-item__label) {
-    font-weight: 500;
-    color: #374151;
-    padding-bottom: 8px;
-  }
+  // :deep(.el-form-item__label) {
+  //   font-weight: 500;
+  //   color: #374151;
+  //   padding-bottom: 8px;
+  // }
 
-  :deep(.el-input) {
-    .el-input__wrapper {
-      box-shadow: 0 0 0 1px #e5e7eb inset;
+  // :deep(.el-input) {
+  //   .el-input__wrapper {
+  //     box-shadow: 0 0 0 1px #e5e7eb inset;
 
-      &:hover {
-        box-shadow: 0 0 0 1px #d1d5db inset;
-      }
+  //     &:hover {
+  //       box-shadow: 0 0 0 1px #d1d5db inset;
+  //     }
 
-      &.is-focus {
-        box-shadow: 0 0 0 2px #3b82f6 inset;
-      }
-    }
-  }
+  //     &.is-focus {
+  //       box-shadow: 0 0 0 2px #3b82f6 inset;
+  //     }
+  //   }
+  // }
 
-  :deep(.el-select) {
-    .el-input__wrapper {
-      box-shadow: 0 0 0 1px #e5e7eb inset;
+  // :deep(.el-select) {
+  //   .el-input__wrapper {
+  //     box-shadow: 0 0 0 1px #e5e7eb inset;
 
-      &:hover {
-        box-shadow: 0 0 0 1px #d1d5db inset;
-      }
-    }
-  }
+  //     &:hover {
+  //       box-shadow: 0 0 0 1px #d1d5db inset;
+  //     }
+  //   }
+  // }
 
-  :deep(.v-md-editor) {
-    border-radius: 8px;
-    border-color: #e5e7eb;
+  // :deep(.el-form-item.is-error) {
+  //   .el-input__wrapper {
+  //     box-shadow: 0 0 0 1px #f56c6c inset;
+  //   }
 
-    &:hover {
-      border-color: #d1d5db;
-    }
-
-    &.is-focus {
-      border-color: #3b82f6;
-    }
-  }
-
-  :deep(.el-form-item.is-error) {
-    .el-input__wrapper {
-      box-shadow: 0 0 0 1px #f56c6c inset;
-    }
-
-    .v-md-editor {
-      border-color: #f56c6c;
-    }
-  }
+  //   .v-md-editor {
+  //     border-color: #f56c6c;
+  //   }
+  // }
 </style>

@@ -2,20 +2,20 @@
 @use "sass:color";
 $base-color: (
   "light": (
-    "primary": #0052cc,
-    "success": #36b27e,
-    "warning": #ffab00,
-    "danger": #ff3030,
-    "error": #ff3030,
-    "info": #c5c8ce
+    "primary": #409eff,
+    "success": #67c23a,
+    "warning": #e6a23c,
+    "danger": #f56c6c,
+    "error": #f56c6c,
+    "info": #909399
   ),
   "dark": (
-    "primary": #4c9aff,
-    "success": #46a27b,
-    "warning": #e2a831,
-    "danger": #ce3b3b,
-    "error": #ce3b3b,
-    "info": #999
+    "primary": #409eff,
+    "success": #67c23a,
+    "warning": #e6a23c,
+    "danger": #f56c6c,
+    "error": #f56c6c,
+    "info": #909399
   )
 ) !default;
 
@@ -24,8 +24,8 @@ $theme: map.deep-merge(
   (
     "light": (
       "text": (
-        "base": #333,
-        "light": #666,
+        "base": #303133,
+        "light": #606266,
         "primary": map.get($base-color, "light", "primary"),
         "success": map.get($base-color, "light", "success"),
         "warning": map.get($base-color, "light", "warning"),
@@ -37,9 +37,9 @@ $theme: map.deep-merge(
         "info": map.get($base-color, "light", "info")
       ),
       "background": (
-        "base": #fff,
-        "layout": #edf1f6,
-        "default": "#FAFAFA",
+        "base": #ffffff,
+        "layout": #f5f7fa,
+        "default": "#ffffff",
         "light": #666666,
         "primary": map.get($base-color, "light", "primary"),
         "primary-alpha10": color.change(
@@ -68,7 +68,7 @@ $theme: map.deep-merge(
         "form-label": #f5f6f6
       ),
       "border": (
-        "base": #dcdcdc,
+        "base": #dcdfe6,
         "light": #666666,
         "primary": map.get($base-color, "light", "primary"),
         "primary-alpha10": color.change(
@@ -93,8 +93,8 @@ $theme: map.deep-merge(
     ),
     "dark": (
       "text": (
-        "base": rgba(255, 255, 255, 0.7),
-        "light": rgba(255, 255, 255, 0.9),
+        "base": #cfd3dc,
+        "light": #e5eaf3,
         "primary": map.get($base-color, "dark", "primary"),
         "success": map.get($base-color, "dark", "success"),
         "danger": map.get($base-color, "dark", "danger"),
@@ -106,8 +106,8 @@ $theme: map.deep-merge(
         "info": map.get($base-color, "dark", "info")
       ),
       "background": (
-        "base": #2a3b57,
-        "layout": #1b2638,
+        "base": #141414,
+        "layout": #0a0a0a,
         "light": rgba(255, 255, 255, 0.9),
         "primary": map.get($base-color, "dark", "primary"),
         "primary-alpha10": color.change(
@@ -136,7 +136,7 @@ $theme: map.deep-merge(
         "form-label": #223047
       ),
       "border": (
-        "base": #dcdcdc,
+        "base": #4c4d4f,
         "light": rgba(255, 255, 255, 0.9),
         "primary": map.get($base-color, "dark", "primary"),
         "primary-alpha10": color.change(

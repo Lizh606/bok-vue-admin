@@ -14,16 +14,23 @@ export const useThemeStore = defineStore(
     const theme = ref<SupportModeEnum>(SupportModeEnum.Light)
     const isDark = usePreferredDark()
 
+    const updateDOMTheme = (currentTheme: SupportModeEnum) => {
+      document.documentElement.setAttribute(THEME_KEY, currentTheme)
+      document.documentElement.classList.toggle(
+        "dark",
+        currentTheme === SupportModeEnum.Dark
+      )
+    }
+
     const changeTheme = (value: SupportModeEnum) => {
       theme.value = value
       let currentTheme = value
-      // 先判断是否跟随系统
       if (theme.value === SupportModeEnum.System) {
         currentTheme = isDark.value
           ? SupportModeEnum.Dark
           : SupportModeEnum.Light
       }
-      document.documentElement.setAttribute(THEME_KEY, currentTheme)
+      updateDOMTheme(currentTheme)
     }
 
     // 监听系统主题变化

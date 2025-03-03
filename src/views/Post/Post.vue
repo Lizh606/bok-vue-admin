@@ -1,7 +1,7 @@
 <template>
   <div class="tw-flex tw-flex-col tw-gap-4">
     <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-text-light tw-text-2xl tw-font-bold">文章管理</div>
+      <div class="tw-text-2xl tw-font-bold tw-text-light">文章管理</div>
       <el-button type="primary" @click="openDialog('add')" v-if="isAdmin">
         <el-icon class="tw-mr-1"><Plus /></el-icon>新增文章
       </el-button>
@@ -37,11 +37,6 @@
           stripe
           border
           style="width: 100%"
-          :header-cell-style="{
-            background: '#f8f9fa',
-            color: '#495057',
-            fontWeight: '600'
-          }"
         >
           <el-table-column prop="id" label="序号" width="80" align="center" />
           <el-table-column
@@ -83,21 +78,16 @@
             width="180"
           >
             <template #default="scope">
-              <el-button
-                link
-                type="primary"
+              <el-link
                 @click="openDialog('edit', scope.row)"
-                class="hover:tw-text-primary tw-font-bold"
-                >编辑</el-button
+                type="primary"
+                class="tw-mr-2"
               >
-              <el-button
-                v-if="isAdmin"
-                link
-                type="danger"
-                class="tw-text-danger"
-                @click="openDialog('delete', scope.row)"
-                >删除</el-button
-              >
+                编辑
+              </el-link>
+              <el-link @click="openDialog('delete', scope.row)" type="danger">
+                删除
+              </el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -205,23 +195,23 @@
 
 <style lang="scss" scoped>
   :deep(.el-card) {
-    @apply tw-bg-base tw-border-none tw-p-4 tw-text-base tw-transition-[0.3s];
+    @apply tw-border-none tw-bg-base tw-p-4 tw-text-base tw-transition-[0.3s];
     .el-card__body {
       @apply tw-flex tw-h-full tw-flex-col tw-p-0;
     }
   }
 
-  :deep(.el-table) {
-    @apply tw-overflow-hidden tw-rounded-lg;
+  // :deep(.el-table) {
+  //   @apply tw-overflow-hidden tw-rounded-lg;
 
-    .el-table__header-wrapper {
-      @apply tw-border-base tw-border-b tw-border-solid;
-    }
+  //   .el-table__header-wrapper {
+  //     @apply tw-border-b tw-border-solid tw-border-base;
+  //   }
 
-    .el-button--link {
-      @apply tw-px-2 tw-py-1 tw-font-bold;
-    }
-  }
+  //   .el-button--link {
+  //     @apply tw-px-2 tw-py-1 tw-font-bold;
+  //   }
+  // }
 
   :deep(.el-pagination) {
     .el-pagination__sizes {

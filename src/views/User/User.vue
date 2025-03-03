@@ -1,7 +1,7 @@
 <template>
-  <div class="tw-bg-base tw-flex tw-flex-col tw-gap-4">
+  <div class="tw-flex tw-flex-col tw-gap-4 tw-bg-base">
     <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-text-light tw-text-2xl tw-font-bold">用户管理</div>
+      <div class="tw-text-2xl tw-font-bold tw-text-light">用户管理</div>
       <el-button type="primary" @click="openDialog('add')" v-if="isAdmin">
         <el-icon class="tw-mr-1"><Plus /></el-icon>新增用户
       </el-button>
@@ -62,21 +62,20 @@
           </el-table-column> -->
           <el-table-column label="操作" width="180" align="center">
             <template #default="scope">
-              <el-button
-                type="primary"
-                link
+              <el-link
                 @click="openDialog('edit', scope.row)"
+                type="primary"
+                class="tw-mr-2"
               >
                 编辑
-              </el-button>
-              <el-button
-                type="danger"
-                link
-                @click="openDialog('delete', scope.row)"
+              </el-link>
+              <el-link
                 v-if="isAdmin"
+                @click="openDialog('delete', scope.row)"
+                type="danger"
               >
                 删除
-              </el-button>
+              </el-link>
             </template>
           </el-table-column>
         </el-table>

@@ -1,8 +1,18 @@
 <template>
   <div
-    class="tw-flex tw-h-14 tw-items-center tw-justify-between tw-bg-base tw-px-4 tw-shadow-sm"
+    class="tw-flex tw-h-14 tw-items-center tw-justify-between tw-bg-base tw-pr-4 tw-shadow-sm"
   >
-    <div class="tw-flex tw-items-center tw-gap-2">
+    <div class="tw-flex tw-h-full tw-items-center tw-gap-2">
+      <div
+        class="tw-flex tw-h-full tw-cursor-pointer tw-items-center tw-justify-center tw-border-l-0 tw-border-r tw-border-solid tw-border-r-gray-200 tw-px-3 tw-shadow-inner"
+        @click="isCollapse = !isCollapse"
+      >
+        <el-icon size="20" class="tw-h-full">
+          <Fold v-show="!isCollapse" />
+          <Expand v-show="isCollapse" />
+        </el-icon>
+      </div>
+
       <el-icon size="20"><HomeFilled /></el-icon>
 
       <el-breadcrumb :separator-icon="ArrowRight">
@@ -82,6 +92,8 @@
     ArrowRight,
     ChatDotRound,
     EditPen,
+    Expand,
+    Fold,
     HomeFilled,
     Link,
     Monitor,
@@ -91,6 +103,10 @@
   } from "@element-plus/icons-vue"
   import { computed } from "vue"
   import { useRoute, useRouter } from "vue-router"
+  const isCollapse = defineModel<boolean>("isCollapse", {
+    required: true,
+    default: false
+  })
   const route = useRoute()
   const router = useRouter()
   const breadCrumbList = computed(() => {
