@@ -2,7 +2,7 @@
   <div class="tw-flex tw-flex-col tw-gap-4">
     <div class="tw-flex tw-items-center tw-justify-between">
       <div class="tw-text-2xl tw-font-bold tw-text-light">文章管理</div>
-      <el-button type="primary" @click="openDialog('add')" v-if="isAdmin">
+      <el-button type="primary" @click="openPostDialog('add')" v-if="isAdmin">
         <el-icon class="tw-mr-1"><Plus /></el-icon>新增文章
       </el-button>
     </div>
@@ -79,13 +79,16 @@
           >
             <template #default="scope">
               <el-link
-                @click="openDialog('edit', scope.row)"
+                @click="openPostDialog('edit', scope.row)"
                 type="primary"
                 class="tw-mr-2"
               >
                 编辑
               </el-link>
-              <el-link @click="openDialog('delete', scope.row)" type="danger">
+              <el-link
+                @click="openPostDialog('delete', scope.row)"
+                type="danger"
+              >
                 删除
               </el-link>
             </template>
@@ -105,25 +108,19 @@
         />
       </div>
     </el-card>
-
-    <DeleteDialog
-      v-model:show="deleteDialog"
-      :currentFormData="currentFormData"
-      @updateList="getTableData"
-    ></DeleteDialog>
   </div>
 </template>
 
 <script setup lang="ts">
   import useTablePagination from "@/hooks/useTablePagination"
   import type { Post } from "@/services/posts"
-  import { getPostList } from "@/services/posts"
+  import { deletePost, getPostList } from "@/services/posts"
   import { getUserProfile, type Role } from "@/services/user"
   import { useAppStore } from "@/stores/app"
+  import { openDeleteDialog } from "@/utils/openDialog"
   import { Plus, Warning } from "@element-plus/icons-vue"
   import { computed, onMounted, ref, watch } from "vue"
   import { useRouter } from "vue-router"
-  import DeleteDialog from "./dialogs/DeleteDialog.vue"
   const { userInfo } = useAppStore()
   // table元素
   const tableRef = ref()
@@ -158,13 +155,12 @@
       immediate: true
     }
   )
-  const deleteDialog = ref(false)
   const currentFormData = ref()
   const router = useRouter()
   const isAdmin = computed(() => {
     return userInfo.roles && userInfo.roles.some((item: Role) => item.id === 1)
   })
-  const openDialog = (type: string, data?: any) => {
+  const openPostDialog = (type: string, data?: any) => {
     currentFormData.value = data
     switch (type) {
       case "add":
@@ -177,7 +173,15 @@
         })
         break
       case "delete":
-        deleteDialog.value = true
+        openDeleteDialog({
+          content: "确定删除该博文吗？",
+          onDelete: async () => {
+            await deletePost(data.id)
+          },
+          onSuccess: () => {
+            getTableData()
+          }
+        })
         break
       default:
         break

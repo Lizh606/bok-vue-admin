@@ -12,6 +12,7 @@
         <el-button
           class="tw-border-none tw-bg-primary tw-font-bold hover:tw-bg-primary-alpha10"
           @click="handleSubmit"
+          type="primary"
           v-if="isAdmin"
         >
           <el-icon class="tw-mr-1"><DocumentAdd /></el-icon>发布
