@@ -32,19 +32,46 @@
           style="width: 100%"
         >
           <el-table-column prop="id" label="ID" width="80" align="center" />
-          <!-- <el-table-column width="80" align="center">
+          <el-table-column width="80" align="center" label="头像">
             <template #default="scope">
-              <div class="tw-h-8 tw-w-8 tw-overflow-hidden tw-rounded-full">
-                <img
-                  :src="scope.row.avatar || '/src/assets/ava.jpg'"
-                  class="tw-h-full tw-w-full tw-object-cover"
-                />
+              <div
+                class="tw-flex tw-h-full tw-w-full tw-items-center tw-justify-center"
+              >
+                <div class="tw-h-8 tw-w-8 tw-overflow-hidden tw-rounded-full">
+                  <el-image
+                    z-index="99"
+                    :teleported="true"
+                    :src="scope.row.profile && scope.row.profile.avatar"
+                    :preview-src-list="[
+                      scope.row.profile && scope.row.profile.avatar
+                    ]"
+                    fit="cover"
+                    class="tw-h-full tw-w-full tw-object-cover"
+                  >
+                    <template #error>
+                      <div
+                        class="tw-flex tw-w-1/3 tw-flex-col tw-items-center tw-justify-center tw-bg-gray-100 tw-text-gray-400"
+                      >
+                        <el-icon class="tw-mb-1 tw-text-xl"
+                          ><Picture
+                        /></el-icon>
+                        <span class="tw-text-xs">加载失败</span>
+                      </div>
+                    </template>
+                  </el-image>
+                </div>
               </div>
             </template>
-          </el-table-column> -->
+          </el-table-column>
           <el-table-column
             prop="username"
             label="用户名"
+            width="150"
+            align="center"
+          />
+          <el-table-column
+            prop="loginName"
+            label="昵称"
             width="150"
             align="center"
           />
@@ -60,24 +87,33 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="gender"
-            label="性别"
-            width="100"
-            align="center"
-          />
-          <el-table-column prop="address" label="地址" />
-          <!-- <el-table-column label="状态" width="100" align="center">
+          <el-table-column label="状态" width="100" align="center">
             <template #default="scope">
               <el-switch
                 v-model="scope.row.status"
                 :active-value="1"
                 :inactive-value="0"
+                :disabled="!isAdmin"
+                @change="handleStatusChange(scope.row)"
               />
             </template>
-          </el-table-column> -->
+          </el-table-column>
+          <el-table-column
+            prop="lastLoginTime"
+            label="最后登录时间"
+            width="180"
+            align="center"
+          />
+          <el-table-column
+            prop="createTime"
+            label="创建时间"
+            width="180"
+            align="center"
+          />
+
           <el-table-column
             label="操作"
+            fixed="right"
             width="180"
             align="center"
             v-if="isAdmin"
@@ -120,6 +156,7 @@
   import useTablePagination from "@/hooks/useTablePagination"
   import {
     addUser,
+    changeUserStatus,
     deleteUser,
     getUserListByPage,
     updateUser,
@@ -260,6 +297,19 @@
       isSubmitting.value = false
     }
   }
+
+  // 添加状态切换处理函数
+  const handleStatusChange = async (row: User) => {
+    try {
+      await changeUserStatus(row.id as number)
+      ElMessage.success("更新状态成功")
+    } catch (error) {
+      ElMessage.error("更新状态失败")
+      // 恢复原状态
+      row.status = row.status === 1 ? 0 : 1
+    }
+  }
+
   onMounted(() => {
     tableHeight.value = tableRef.value.offsetHeight
     window.onresize = () => {
@@ -275,5 +325,8 @@
     .el-card__body {
       @apply tw-flex tw-h-full tw-flex-col tw-p-0;
     }
+  }
+  :deep(.el-table__cell) {
+    position: static !important;
   }
 </style>

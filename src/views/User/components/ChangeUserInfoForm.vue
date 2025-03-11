@@ -1,7 +1,15 @@
 <template>
-  <el-form :model="form" :rules="rules" ref="formRef">
+  <el-form
+    :model="form"
+    :rules="rules"
+    ref="formRef"
+    class="tw-max-h-[60vh] tw-overflow-auto"
+  >
     <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
       <el-input v-model="form.username" autocomplete="off" />
+    </el-form-item>
+    <el-form-item label="昵称" :label-width="formLabelWidth" prop="loginName">
+      <el-input v-model="form.loginName" autocomplete="off" />
     </el-form-item>
     <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
       <el-input
@@ -32,6 +40,9 @@
         <el-radio label="女" />
       </el-radio-group>
     </el-form-item>
+    <el-form-item label="联系方式" :label-width="formLabelWidth" prop="phone">
+      <el-input v-model="form.profile.phone" placeholder="请输入联系方式" />
+    </el-form-item>
     <el-form-item label="地址" :label-width="formLabelWidth">
       <el-input
         v-model="form.profile.address"
@@ -40,12 +51,39 @@
         placeholder="请输入地址"
       />
     </el-form-item>
+
+    <el-form-item label="头像" :label-width="formLabelWidth" prop="avatar">
+      <div class="tw-flex tw-w-full tw-flex-col tw-gap-3">
+        <el-input
+          v-model="form.profile.avatar"
+          placeholder="请输入头像链接"
+          class="tw-min-w-0 tw-flex-1"
+        />
+        <el-image
+          v-if="form.profile.avatar"
+          :src="form.profile.avatar"
+          :preview-src-list="[form.profile.avatar]"
+          fit="cover"
+          class="tw-w-1/5 tw-cursor-pointer tw-rounded-full"
+        >
+          <template #error>
+            <div
+              class="tw-flex tw-w-1/3 tw-flex-col tw-items-center tw-justify-center tw-bg-gray-100 tw-text-gray-400"
+            >
+              <el-icon class="tw-mb-1 tw-text-xl"><Picture /></el-icon>
+              <span class="tw-text-xs">加载失败</span>
+            </div>
+          </template>
+        </el-image>
+      </div>
+    </el-form-item>
   </el-form>
 </template>
 
 <script setup lang="ts">
-  import type { Role, User } from "@/services/user"
+  import type { Role, User, UserStatus } from "@/services/user"
   import { getRoleList } from "@/services/user"
+  import { Picture } from "@element-plus/icons-vue"
   import { ElMessage } from "element-plus"
   import { onMounted, ref, watch } from "vue"
 
@@ -54,7 +92,11 @@
     profile: {
       gender: string
       address: string
+      avatar: string
+      phone: string
     }
+    loginName: string
+    status: keyof typeof UserStatus
   }
 
   interface Props {
@@ -73,9 +115,13 @@
   const initialForm: FormData = {
     username: "",
     password: "",
+    loginName: "",
+    status: 1,
     profile: {
       gender: "",
-      address: ""
+      address: "",
+      avatar: "",
+      phone: ""
     },
     roles: []
   }
@@ -86,6 +132,7 @@
   const rules = {
     username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
     password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+    loginName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
     roles: [{ required: true, message: "请选择角色", trigger: "change" }]
   }
 
@@ -121,7 +168,12 @@
         ...JSON.parse(JSON.stringify(newData)),
         password: "",
         roles: roleIds,
-        profile: newData.profile || { gender: "", address: "" }
+        profile: newData.profile || {
+          gender: "",
+          address: "",
+          avatar: "",
+          phone: ""
+        }
       }
     },
     { immediate: true }

@@ -68,11 +68,11 @@
         <div class="tw-flex tw-cursor-pointer tw-items-center tw-gap-2">
           <div class="tw-h-8 tw-w-8 tw-overflow-hidden tw-rounded-full">
             <img
-              src="@/assets/ava.jpg"
+              :src="userAvatar"
               class="tw-h-full tw-w-full tw-object-cover"
             />
           </div>
-          <span class="tw-text-base">{{ userName }}</span>
+          <span class="tw-text-base">{{ loginName }}</span>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
@@ -115,6 +115,15 @@
   const appStore = useAppStore()
   const userName = computed(() => {
     return appStore.userInfo.username
+  })
+  const loginName = computed(() => {
+    return appStore.userInfo.loginName
+  })
+  const userAvatar = computed(() => {
+    return (
+      (appStore.userInfo.profile && appStore.userInfo.profile.avatar) ||
+      new URL("@/assets/ava.jpg", import.meta.url).href
+    )
   })
   const logout = () => {
     useAppStore().$patch({ token: undefined, userInfo: {} })

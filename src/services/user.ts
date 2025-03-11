@@ -5,15 +5,26 @@ export interface Profile {
   id?: number
   gender?: string
   address?: string
+  avatar?: string
+  phone?: string
 }
 export interface Role {
   id: number
   name: string
 }
+
+export const UserStatus = {
+  0: "禁用",
+  1: "启用"
+} as const
 export interface User {
   id?: number
   username: string
   password: string
+  loginName: string
+  createTime?: string
+  lastLoginTime?: string
+  status: keyof typeof UserStatus
   roles?: Role[]
   profile?: Profile
 }
@@ -58,4 +69,8 @@ export const getGithubToken = async () => {
     },
     false
   )
+}
+
+export const changeUserStatus = async (id: number) => {
+  return await get(`${BASE_URL}v1/user/changeStatus/${id}`)
 }
