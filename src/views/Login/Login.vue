@@ -97,7 +97,6 @@
           const loginInfo = isGuest
             ? { username: "visitor", password: "123456" }
             : loginForm.value
-          console.log(loginInfo)
           await login(loginInfo)
           router.push("/")
         } catch (error) {
