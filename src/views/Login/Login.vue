@@ -1,67 +1,86 @@
 <template>
   <div
-    class="login-container tw-flex tw-min-h-screen tw-items-center tw-justify-center tw-bg-base tw-px-4 tw-py-12 sm:tw-px-6 lg:tw-px-8"
+    class="login-container tw-flex tw-min-h-screen tw-flex-col tw-items-center tw-justify-center tw-bg-base tw-px-4 tw-py-12 sm:tw-px-6 lg:tw-px-8"
   >
-    <div
-      class="login-box tw-w-full tw-max-w-md tw-space-y-8 tw-rounded-lg tw-bg-base tw-p-8 tw-shadow-lg"
-    >
-      <div class="tw-text-center">
-        <h2 class="tw-mb-2 tw-text-3xl tw-font-bold tw-text-light">欢迎回来</h2>
-        <p class="tw-text-light">登录后开始您的博客运维</p>
-      </div>
-
-      <el-form
-        ref="loginFormRef"
-        :model="loginForm"
-        :rules="rules"
-        class="tw-space-y-6"
+    <div class="login-title-wrapper tw-mb-8">
+      <h1 class="login-title tw-text-5xl tw-font-bold tw-text-light">
+        <img src="../../assets//XiaoHang.png" alt="" class="tw-h-12 tw-w-24" />
+      </h1>
+    </div>
+    <div class="login-box-wrapper tw-w-full tw-max-w-md">
+      <div
+        class="login-box tw-w-full tw-space-y-8 tw-rounded-lg tw-bg-base tw-p-8 tw-shadow-lg"
       >
-        <el-form-item prop="username">
-          <el-input
-            v-model="loginForm.username"
-            placeholder="用户名"
-            :prefix-icon="User"
-            size="large"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item prop="password">
-          <el-input
-            v-model="loginForm.password"
-            type="password"
-            placeholder="密码"
-            :prefix-icon="Lock"
-            size="large"
-            show-password
-          ></el-input>
-        </el-form-item>
-
-        <div class="tw-flex tw-items-center tw-justify-between">
-          <el-checkbox v-model="loginForm.remember">记住我</el-checkbox>
-          <el-link type="primary" :underline="false">忘记密码？</el-link>
-        </div>
-
-        <div>
-          <el-button
-            type="primary"
-            class="tw-w-full"
-            size="large"
-            :loading="loading"
-            @click="handleLogin(false)"
-            >登录</el-button
+        <div class="tw-text-center">
+          <div
+            class="tw-mb-2 tw-flex tw-items-center tw-justify-center tw-gap-3"
           >
+            <h2 class="tw-text-3xl tw-font-bold tw-text-light">欢迎回来</h2>
+          </div>
+
+          <div class="tw-flex tw-items-center tw-justify-center tw-gap-2">
+            <el-icon :size="16">
+              <Reading />
+            </el-icon>
+            <p class="tw-text-light">登录后开始您的博客运维</p>
+          </div>
         </div>
-        <div>
-          <el-button
-            type="info"
-            class="tw-w-full"
-            size="large"
-            plain
-            @click="handleLogin(true)"
-            >游客访问</el-button
-          >
-        </div>
-      </el-form>
+
+        <el-form
+          ref="loginFormRef"
+          :model="loginForm"
+          :rules="rules"
+          class="tw-space-y-6"
+        >
+          <el-form-item prop="username">
+            <el-input
+              v-model="loginForm.username"
+              placeholder="用户名"
+              :prefix-icon="User"
+              size="large"
+            ></el-input>
+          </el-form-item>
+
+          <el-form-item prop="password">
+            <el-input
+              v-model="loginForm.password"
+              type="password"
+              placeholder="密码"
+              :prefix-icon="Lock"
+              size="large"
+              show-password
+            ></el-input>
+          </el-form-item>
+
+          <div class="tw-flex tw-items-center tw-justify-between">
+            <el-checkbox v-model="loginForm.remember">记住我</el-checkbox>
+            <el-link type="primary" :underline="false">忘记密码？</el-link>
+          </div>
+
+          <div>
+            <el-button
+              type="primary"
+              class="tw-w-full"
+              size="large"
+              :loading="loading"
+              @click="handleLogin(false)"
+            >
+              登录
+            </el-button>
+          </div>
+          <div>
+            <el-button
+              type="info"
+              class="tw-w-full"
+              size="large"
+              plain
+              @click="handleLogin(true)"
+            >
+              游客访问
+            </el-button>
+          </div>
+        </el-form>
+      </div>
     </div>
   </div>
 </template>
@@ -69,7 +88,7 @@
 <script setup lang="ts">
   import router from "@/router"
   import { login } from "@/services"
-  import { Lock, User } from "@element-plus/icons-vue"
+  import { Lock, Reading, User } from "@element-plus/icons-vue"
   import { ElMessage } from "element-plus"
   import { ref } from "vue"
 
@@ -112,11 +131,116 @@
 
 <style scoped>
   .login-container {
-    background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    position: relative;
+    background: linear-gradient(180deg, #dde9ff 0%, #f2f5ff 60%, #e9effa 100%);
+    background-size: 400% 400%;
+    animation: backgroundFlow 15s ease infinite;
+    overflow: hidden;
+  }
+
+  .login-title-wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    animation: fadeIn 0.8s ease-out;
+    margin-bottom: 30px;
+  }
+
+  .title-icon {
+    color: #667eea;
+    filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.4));
+  }
+
+  .login-title {
+    position: relative;
+    text-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+  }
+
+  .welcome-icon {
+    color: #667eea;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  .login-container::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+      circle,
+      rgba(102, 126, 234, 0.08) 0%,
+      transparent 70%
+    );
+    animation: rotate 20s linear infinite;
+  }
+
+  .login-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 50%,
+        rgba(118, 75, 162, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 80%,
+        rgba(79, 172, 254, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 40% 20%,
+        rgba(102, 126, 234, 0.1) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
+  }
+
+  .login-box-wrapper {
+    position: relative;
+    z-index: 1;
+    padding: 3px;
+    border-radius: 16px;
+    background: linear-gradient(
+      135deg,
+      #667eea 0%,
+      #764ba2 25%,
+      #f093fb 50%,
+      #4facfe 75%,
+      #667eea 100%
+    );
+    background-size: 400% 400%;
+
+    animation: gradientFlow 3s ease infinite;
+    box-sizing: border-box;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
   }
 
   .login-box {
-    animation: fadeIn 0.5s ease-out;
+    position: relative;
+    width: 100%;
+    border-radius: 16px;
+    background: var(--el-bg-color);
+    box-sizing: border-box;
   }
 
   @keyframes fadeIn {
@@ -127,6 +251,39 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes gradientFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes backgroundFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }
 </style>
