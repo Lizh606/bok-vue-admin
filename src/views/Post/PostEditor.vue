@@ -212,35 +212,30 @@
     //   JSON.parse(JSON.stringify(formData.content))
     // )
     // console.log(markdown)
-    await formRef.value.validate(async (valid) => {
-      if (valid) {
-        try {
-          const postData = {
-            title: formData.title,
-            sort: formData.category,
-            tag: formData.tags.join(","),
-            content: formData.content,
-            description: formData.description,
-            date: formData.date
-          }
+    const isValid = await formRef.value.validate().catch(() => false)
+    if (!isValid) return
 
-          if (isEdit.value) {
-            await updatePost(
-              formData.id as number,
-              postData,
-              containerRef.value
-            )
-          } else {
-            await addPost(postData, containerRef.value)
-          }
-
-          ElMessage.success(isEdit.value ? "文章更新成功" : "文章发布成功")
-          router.push("/article")
-        } catch (error) {
-          ElMessage.error("操作失败")
-        }
+    try {
+      const postData = {
+        title: formData.title,
+        sort: formData.category,
+        tag: formData.tags.join(","),
+        content: formData.content,
+        description: formData.description,
+        date: formData.date
       }
-    })
+
+      if (isEdit.value) {
+        await updatePost(formData.id as number, postData, containerRef.value)
+      } else {
+        await addPost(postData, containerRef.value)
+      }
+
+      ElMessage.success(isEdit.value ? "文章更新成功" : "文章发布成功")
+      router.push("/article")
+    } catch (error) {
+      ElMessage.error("操作失败")
+    }
   }
 </script>
 
