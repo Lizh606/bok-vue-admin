@@ -106,26 +106,37 @@
 
   const loginFormRef = ref()
 
-  const handleLogin = async (isGuest?: boolean) => {
+  const validateForm = async () => {
+    if (!loginFormRef.value) return false
+    try {
+      await loginFormRef.value.validate()
+      return true
+    } catch (error) {
+      return false
+    }
+  }
+
+  const handleLogin = async (isGuest = false) => {
+    if (loading.value) return
     loading.value = true
 
-    loginFormRef.value.validate(async (valid: boolean) => {
-      if (valid) {
-        loading.value = true
-        try {
-          const loginInfo = isGuest
-            ? { username: "visitor", password: "123456" }
-            : loginForm.value
-          await login(loginInfo)
-          router.push("/")
-        } catch (error) {
-          ElMessage.error("登录失败")
-          console.error(error)
-        } finally {
-          loading.value = false
-        }
+    try {
+      if (!isGuest) {
+        const valid = await validateForm()
+        if (!valid) return
       }
-    })
+
+      const loginInfo = isGuest
+        ? { username: "visitor", password: "123456" }
+        : loginForm.value
+      await login(loginInfo)
+      router.push("/")
+    } catch (error) {
+      ElMessage.error("登录失败")
+      console.error(error)
+    } finally {
+      loading.value = false
+    }
   }
 </script>
 

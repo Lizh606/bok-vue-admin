@@ -30,9 +30,9 @@ const router = createRouter({
         {
           path: "/role",
           name: "role",
-          component: () => import("@/views/Login"),
+          component: () => import("@/views/Role/Role.vue"),
           meta: {
-            title: "用户管理"
+            title: "角色管理"
           }
         },
         {
@@ -77,6 +77,17 @@ router.beforeEach(async (to, from, next) => {
     next()
     return
   }
+
+  if (!store.token) {
+    next({ name: "login" })
+    return
+  }
+
+  if (store.userInfo?.loginName) {
+    next()
+    return
+  }
+
   try {
     const userInfo = await getUserInfo()
     if (userInfo) {
@@ -84,10 +95,10 @@ router.beforeEach(async (to, from, next) => {
       next()
       return
     } else {
-      router.push({ name: "login" })
+      next({ name: "login" })
     }
   } catch (error) {
-    router.push({ name: "login" })
+    next({ name: "login" })
   }
 })
 export default router

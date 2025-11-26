@@ -114,7 +114,6 @@
           <el-table-column
             label="操作"
             fixed="right"
-            width="180"
             align="center"
             v-if="isAdmin"
           >
@@ -142,10 +141,10 @@
           background
           layout=" prev, pager, next"
           :total="totalRef"
-          :page-size="pageSizeRef"
+          v-model:page-size="pageSizeRef"
           v-model:current-page="pageRef"
-          @update:current-page="getTableData"
-          @update:page-size="getTableData"
+          @update:current-page="handlePageChange"
+          @update:page-size="handlePageSizeChange"
         />
       </div>
     </el-card>
@@ -168,7 +167,7 @@
   import ChangeUserInfoForm from "@/views/User/components/ChangeUserInfoForm.vue"
   import { Plus, Warning } from "@element-plus/icons-vue"
   import { ElButton, ElMessage } from "element-plus"
-  import { computed, h, onMounted, ref, type Ref } from "vue"
+  import { computed, h, onBeforeUnmount, onMounted, ref, type Ref } from "vue"
   import { USER_DIALOG_TITLE } from "./common"
 
   const { userInfo } = useAppStore()
@@ -182,12 +181,19 @@
       return { ...i.profile, ...i }
     })
   }
-  const { tableData, pageRef, pageSizeRef, getTableData, totalRef } =
-    useTablePagination<User>(getUserListByPage, {
-      queryParams: { page: 1, size: 10 },
-      FormatData,
-      immediate: true
-    })
+  const {
+    tableData,
+    pageRef,
+    pageSizeRef,
+    getTableData,
+    totalRef,
+    handlePageChange,
+    handlePageSizeChange
+  } = useTablePagination<User>(getUserListByPage, {
+    queryParams: { page: 1, size: 10 },
+    FormatData,
+    immediate: true
+  })
 
   const isAdmin = computed(() => {
     return userInfo.roles && userInfo.roles.some((item: Role) => item.id === 1)
@@ -310,11 +316,17 @@
     }
   }
 
+  const updateTableHeight = () => {
+    tableHeight.value = tableRef.value?.offsetHeight
+  }
+
   onMounted(() => {
-    tableHeight.value = tableRef.value.offsetHeight
-    window.onresize = () => {
-      tableHeight.value = tableRef.value.offsetHeight
-    }
+    updateTableHeight()
+    window.addEventListener("resize", updateTableHeight)
+  })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener("resize", updateTableHeight)
   })
 </script>
 

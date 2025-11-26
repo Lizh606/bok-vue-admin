@@ -2,7 +2,6 @@ import "@/styles/index.scss"
 import ElementPlus from "element-plus"
 import "element-plus/dist/index.css"
 import "element-plus/theme-chalk/dark/css-vars.css"
-import { sleep } from "izeper-tool"
 import { createPinia } from "pinia"
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate"
 import "tailwindcss/tailwind.css"
@@ -15,7 +14,6 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
-sleep(10)
 app.mount("#app")
 
 // wangEditor支持markdown

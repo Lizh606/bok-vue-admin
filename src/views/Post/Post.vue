@@ -101,10 +101,10 @@
           background
           layout="prev, pager, next"
           :total="totalRef"
-          :page-size="pageSizeRef"
+          v-model:page-size="pageSizeRef"
           v-model:current-page="pageRef"
-          @update:current-page="getTableData"
-          @update:page-size="getTableData"
+          @update:current-page="handlePageChange"
+          @update:page-size="handlePageSizeChange"
         />
       </div>
     </el-card>
@@ -119,7 +119,7 @@
   import { useAppStore } from "@/stores/app"
   import { openDeleteDialog } from "@/utils/openDialog"
   import { Plus, Warning } from "@element-plus/icons-vue"
-  import { computed, onMounted, ref, watch } from "vue"
+  import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue"
   import { useRouter } from "vue-router"
   const { userInfo } = useAppStore()
   // table元素
@@ -127,11 +127,18 @@
   // table高度
   const tableHeight = ref()
 
-  const { tableData, pageRef, pageSizeRef, getTableData, totalRef } =
-    useTablePagination<Post>(getPostList, {
-      queryParams: { page: 1, size: 15 },
-      immediate: true
-    })
+  const {
+    tableData,
+    pageRef,
+    pageSizeRef,
+    getTableData,
+    totalRef,
+    handlePageChange,
+    handlePageSizeChange
+  } = useTablePagination<Post>(getPostList, {
+    queryParams: { page: 1, size: 15 },
+    immediate: true
+  })
   watch(
     tableData,
     async (newVal) => {
@@ -188,11 +195,17 @@
     }
   }
 
+  const updateTableHeight = () => {
+    tableHeight.value = tableRef.value?.offsetHeight
+  }
+
   onMounted(() => {
-    tableHeight.value = tableRef.value.offsetHeight
-    window.onresize = () => {
-      tableHeight.value = tableRef.value.offsetHeight
-    }
+    updateTableHeight()
+    window.addEventListener("resize", updateTableHeight)
+  })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener("resize", updateTableHeight)
   })
 </script>
 

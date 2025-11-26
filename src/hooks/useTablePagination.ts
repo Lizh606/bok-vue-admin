@@ -24,6 +24,7 @@ export default function <T>(api: api<T>, options: TableOptions<T>) {
       size: pageSizeRef.value
     }
   })
+
   const getTableData = async () => {
     try {
       const { data, total } = await api({ ...queryParams, ...params.value })
@@ -34,8 +35,22 @@ export default function <T>(api: api<T>, options: TableOptions<T>) {
     }
   }
   immediate && onMounted(getTableData)
+
+  const handlePageChange = (page: number) => {
+    pageRef.value = page
+    getTableData()
+  }
+
+  const handlePageSizeChange = (size: number) => {
+    pageSizeRef.value = size
+    pageRef.value = 1
+    getTableData()
+  }
+
   return {
     getTableData,
+    handlePageChange,
+    handlePageSizeChange,
     pageRef,
     pageSizeRef,
     tableData,
