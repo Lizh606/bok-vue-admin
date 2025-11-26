@@ -1,5 +1,5 @@
 import { useAppStore } from "@/stores/app"
-import { ElLoading, type LoadingOptions } from "element-plus"
+import { ElLoading, ElMessage, type LoadingOptions } from "element-plus"
 
 const TOKEN = "access_token"
 interface RequestOptions {
@@ -9,6 +9,7 @@ interface RequestOptions {
 }
 let loadingInstance: ReturnType<typeof ElLoading.service> | null = null
 let loadingCount = 0
+const DEFAULT_ERROR_MESSAGE = "网络异常，请稍后重试"
 
 const createLoading = (loadingOptions?: LoadingOptions) => {
   const baseOptions = {
@@ -54,6 +55,18 @@ const buildBodyAndHeaders = (
   return { requestBody, requestHeaders }
 }
 
+const parseResponse = async (response: Response) => {
+  if (response.status === 204) return null
+  const rawText = await response.text()
+  if (!rawText) return null
+
+  try {
+    return JSON.parse(rawText)
+  } catch (error) {
+    throw new Error("响应格式异常，请联系管理员")
+  }
+}
+
 export const request = async (
   url: string,
   options: RequestOptions = { method: "GET" },
@@ -75,10 +88,11 @@ export const request = async (
       headers,
       body: options.body
     })
-    const result = await response.json()
+    const result = await parseResponse(response)
 
     if (!response.ok) {
-      throw new Error(result.message)
+      const errorMessage = (result && (result.message as string)) || DEFAULT_ERROR_MESSAGE
+      throw new Error(errorMessage)
     }
 
     if (result[TOKEN]) {
@@ -87,6 +101,8 @@ export const request = async (
     }
     return result
   } catch (error: any) {
+    console.error("[request] error:", error)
+    ElMessage.error(error?.message || DEFAULT_ERROR_MESSAGE)
     throw error
   } finally {
     if (isShowLoading) {
