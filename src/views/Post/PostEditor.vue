@@ -193,7 +193,7 @@
         })
       } catch (error) {
         ElMessage.error("获取文章详情失败")
-        router.push("/post")
+        router.push({ name: "list" })
       }
     }
   }
