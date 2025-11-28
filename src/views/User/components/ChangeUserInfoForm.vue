@@ -5,25 +5,41 @@
     ref="formRef"
     class="tw-max-h-[60vh] tw-overflow-auto"
   >
-    <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
+    <el-form-item
+      :label="t('userForm.label.username')"
+      :label-width="formLabelWidth"
+      prop="username"
+    >
       <el-input v-model="form.username" autocomplete="off" />
     </el-form-item>
-    <el-form-item label="昵称" :label-width="formLabelWidth" prop="loginName">
+    <el-form-item
+      :label="t('userForm.label.loginName')"
+      :label-width="formLabelWidth"
+      prop="loginName"
+    >
       <el-input v-model="form.loginName" autocomplete="off" />
     </el-form-item>
-    <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
+    <el-form-item
+      :label="t('userForm.label.password')"
+      :label-width="formLabelWidth"
+      prop="password"
+    >
       <el-input
         v-model="form.password"
         type="password"
-        placeholder="请输入密码"
+        :placeholder="t('userForm.placeholder.password')"
         show-password
       />
     </el-form-item>
-    <el-form-item label="角色" :label-width="formLabelWidth" prop="roles">
+    <el-form-item
+      :label="t('userForm.label.roles')"
+      :label-width="formLabelWidth"
+      prop="roles"
+    >
       <el-select
         v-model="form.roles"
         multiple
-        placeholder="请选择角色"
+        :placeholder="t('userForm.placeholder.roles')"
         :loading="isRolesLoading"
       >
         <el-option
@@ -34,31 +50,48 @@
         />
       </el-select>
     </el-form-item>
-    <el-form-item label="性别" :label-width="formLabelWidth">
+    <el-form-item
+      :label="t('userForm.label.gender')"
+      :label-width="formLabelWidth"
+    >
       <el-radio-group v-model="form.profile.gender">
-        <el-radio label="男" />
-        <el-radio label="女" />
+        <el-radio label="男">{{ t("userForm.gender.male") }}</el-radio>
+        <el-radio label="女">{{ t("userForm.gender.female") }}</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label="联系方式" :label-width="formLabelWidth" prop="phone">
-      <el-input v-model="form.profile.phone" placeholder="请输入联系方式" />
+    <el-form-item
+      :label="t('userForm.label.phone')"
+      :label-width="formLabelWidth"
+      prop="phone"
+    >
+      <el-input
+        v-model="form.profile.phone"
+        :placeholder="t('userForm.placeholder.phone')"
+      />
     </el-form-item>
-    <el-form-item label="地址" :label-width="formLabelWidth">
+    <el-form-item
+      :label="t('userForm.label.address')"
+      :label-width="formLabelWidth"
+    >
       <el-input
         v-model="form.profile.address"
         :autosize="{ minRows: 2, maxRows: 4 }"
         type="textarea"
-        placeholder="请输入地址"
+        :placeholder="t('userForm.placeholder.address')"
       />
     </el-form-item>
 
-    <el-form-item label="头像" :label-width="formLabelWidth" prop="avatar">
-      <div class="tw-flex tw-w-full tw-flex-col tw-gap-3">
-        <el-input
-          v-model="form.profile.avatar"
-          placeholder="请输入头像链接"
-          class="tw-min-w-0 tw-flex-1"
-        />
+    <el-form-item
+      :label="t('userForm.label.avatar')"
+      :label-width="formLabelWidth"
+      prop="avatar"
+    >
+          <div class="tw-flex tw-w-full tw-flex-col tw-gap-3">
+            <el-input
+              v-model="form.profile.avatar"
+              :placeholder="t('userForm.placeholder.avatar')"
+              class="tw-min-w-0 tw-flex-1"
+            />
         <el-image
           v-if="form.profile.avatar"
           :src="form.profile.avatar"
@@ -71,7 +104,9 @@
               class="tw-flex tw-w-1/3 tw-flex-col tw-items-center tw-justify-center tw-bg-gray-100 tw-text-gray-400"
             >
               <el-icon class="tw-mb-1 tw-text-xl"><Picture /></el-icon>
-              <span class="tw-text-xs">加载失败</span>
+                  <span class="tw-text-xs">
+                    {{ t("userForm.message.imageLoadFailed") }}
+                  </span>
             </div>
           </template>
         </el-image>
@@ -86,6 +121,7 @@
   import { Picture } from "@element-plus/icons-vue"
   import { ElMessage } from "element-plus"
   import { onMounted, ref, watch } from "vue"
+  import { useI18n } from "@/hooks/useI18n"
 
   interface FormData extends Omit<User, "roles"> {
     roles: number[]
@@ -126,14 +162,39 @@
     roles: []
   }
 
+  const { t } = useI18n()
   const form = ref<FormData>({ ...initialForm })
 
   // 表单验证规则
   const rules = {
-    username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-    password: [{ required: true, message: "请输入密码", trigger: "blur" }],
-    loginName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
-    roles: [{ required: true, message: "请选择角色", trigger: "change" }]
+    username: [
+      {
+        required: true,
+        message: t("userForm.validation.username"),
+        trigger: "blur"
+      }
+    ],
+    password: [
+      {
+        required: true,
+        message: t("userForm.validation.password"),
+        trigger: "blur"
+      }
+    ],
+    loginName: [
+      {
+        required: true,
+        message: t("userForm.validation.loginName"),
+        trigger: "blur"
+      }
+    ],
+    roles: [
+      {
+        required: true,
+        message: t("userForm.validation.roles"),
+        trigger: "change"
+      }
+    ]
   }
 
   // 方法
@@ -148,7 +209,7 @@
       isRolesLoading.value = true
       roleList.value = await getRoleList()
     } catch (error) {
-      ElMessage.error("获取角色列表失败")
+      ElMessage.error(t("userForm.message.loadRolesFailed"))
     } finally {
       isRolesLoading.value = false
     }

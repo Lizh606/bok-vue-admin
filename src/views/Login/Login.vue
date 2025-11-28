@@ -15,14 +15,16 @@
           <div
             class="tw-mb-2 tw-flex tw-items-center tw-justify-center tw-gap-3"
           >
-            <h2 class="tw-text-3xl tw-font-bold tw-text-light">欢迎回来</h2>
+            <h2 class="tw-text-3xl tw-font-bold tw-text-light">
+              {{ t("login.title") }}
+            </h2>
           </div>
 
           <div class="tw-flex tw-items-center tw-justify-center tw-gap-2">
             <el-icon :size="16">
               <Reading />
             </el-icon>
-            <p class="tw-text-light">登录后开始您的博客运维</p>
+            <p class="tw-text-light">{{ t("login.description") }}</p>
           </div>
         </div>
 
@@ -35,7 +37,7 @@
           <el-form-item prop="username">
             <el-input
               v-model="loginForm.username"
-              placeholder="用户名"
+              :placeholder="t('login.placeholder.username')"
               :prefix-icon="User"
               size="large"
             ></el-input>
@@ -45,7 +47,7 @@
             <el-input
               v-model="loginForm.password"
               type="password"
-              placeholder="密码"
+              :placeholder="t('login.placeholder.password')"
               :prefix-icon="Lock"
               size="large"
               show-password
@@ -53,8 +55,12 @@
           </el-form-item>
 
           <div class="tw-flex tw-items-center tw-justify-between">
-            <el-checkbox v-model="loginForm.remember">记住我</el-checkbox>
-            <el-link type="primary" :underline="false">忘记密码？</el-link>
+            <el-checkbox v-model="loginForm.remember">
+              {{ t("login.remember") }}
+            </el-checkbox>
+            <el-link type="primary" :underline="false">
+              {{ t("login.forgot") }}
+            </el-link>
           </div>
 
           <div>
@@ -65,7 +71,7 @@
               :loading="loading"
               @click="handleLogin(false)"
             >
-              登录
+              {{ t("login.button.login") }}
             </el-button>
           </div>
           <div>
@@ -76,7 +82,7 @@
               plain
               @click="handleLogin(true)"
             >
-              游客访问
+              {{ t("login.button.guest") }}
             </el-button>
           </div>
         </el-form>
@@ -91,8 +97,10 @@
   import { Lock, Reading, User } from "@element-plus/icons-vue"
   import { ElMessage } from "element-plus"
   import { ref } from "vue"
+  import { useI18n } from "@/hooks/useI18n"
 
   const loading = ref(false)
+  const { t } = useI18n()
   const loginForm = ref({
     username: "",
     password: "",
@@ -100,8 +108,20 @@
   })
 
   const rules = {
-    username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-    password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+    username: [
+      {
+        required: true,
+        message: t("login.validation.username"),
+        trigger: "blur"
+      }
+    ],
+    password: [
+      {
+        required: true,
+        message: t("login.validation.password"),
+        trigger: "blur"
+      }
+    ]
   }
 
   const loginFormRef = ref()
@@ -132,7 +152,7 @@
       await login(loginInfo)
       router.push("/")
     } catch (error) {
-      ElMessage.error("登录失败")
+      ElMessage.error(t("login.message.loginFailed"))
       console.error(error)
     } finally {
       loading.value = false

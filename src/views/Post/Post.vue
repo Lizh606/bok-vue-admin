@@ -1,9 +1,12 @@
 <template>
   <div class="tw-flex tw-flex-col tw-gap-4">
     <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-text-2xl tw-font-bold tw-text-light">文章管理</div>
+      <div class="tw-text-2xl tw-font-bold tw-text-light">
+        {{ t("post.title") }}
+      </div>
       <el-button type="primary" @click="openPostDialog('add')" v-if="isAdmin">
-        <el-icon class="tw-mr-1"><Plus /></el-icon>新增文章
+        <el-icon class="tw-mr-1"><Plus /></el-icon>
+        {{ t("post.button.add") }}
       </el-button>
     </div>
 
@@ -18,15 +21,15 @@
           <template #title>
             <div class="tw-flex tw-items-center tw-gap-2">
               <el-icon><Warning /></el-icon>
-              <span>访客提示</span>
+              <span>{{ t("post.alert.title") }}</span>
             </div>
           </template>
           <div class="tw-mt-2">
-            当前为游客访问模式，暂无查看编辑权限。您可以访问
+            {{ t("post.alert.messageStart") }}
             <el-link href="https://wanyue.me/" target="_blank" type="primary">
-              🔗博客
+              {{ t("post.alert.linkText") }}
             </el-link>
-            查看已发布的文章。
+            {{ t("post.alert.messageEnd") }}
           </div>
         </el-alert>
       </div>
@@ -38,27 +41,42 @@
           border
           style="width: 100%"
         >
-          <el-table-column prop="id" label="序号" width="80" align="center" />
+        <el-table-column
+          prop="id"
+          :label="t('post.table.index')"
+          width="80"
+          align="center"
+        />
           <el-table-column
             prop="title"
-            label="文章标题"
+            :label="t('post.table.title')"
             min-width="300"
             align="left"
           />
           <el-table-column
             prop="userName"
-            label="作者"
+            :label="t('post.table.author')"
             width="160"
             align="center"
           />
-          <el-table-column prop="sort" label="分类" width="160" align="center">
+          <el-table-column
+            prop="sort"
+            :label="t('post.table.category')"
+            width="160"
+            align="center"
+          >
             <template #default="scope">
               <el-tag type="success" effect="light" round>
                 {{ scope.row.sort }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="tag" label="标签" width="160" align="center">
+          <el-table-column
+            prop="tag"
+            :label="t('post.table.tag')"
+            width="160"
+            align="center"
+          >
             <template #default="scope">
               <el-tag type="warning" effect="light" round>
                 {{ scope.row.tag }}
@@ -67,12 +85,12 @@
           </el-table-column>
           <el-table-column
             prop="date"
-            label="发布日期"
+            :label="t('post.table.date')"
             width="180"
             align="center"
           />
           <el-table-column
-            label="操作"
+            :label="t('post.table.actions')"
             fixed="right"
             align="center"
             width="180"
@@ -83,13 +101,13 @@
                 type="primary"
                 class="tw-mr-2"
               >
-                编辑
+                {{ t("post.operations.edit") }}
               </el-link>
               <el-link
                 @click="openPostDialog('delete', scope.row)"
                 type="danger"
               >
-                删除
+                {{ t("post.operations.delete") }}
               </el-link>
             </template>
           </el-table-column>
@@ -120,8 +138,10 @@
   import { openDeleteDialog } from "@/utils/openDialog"
   import { Plus, Warning } from "@element-plus/icons-vue"
   import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue"
+  import { useI18n } from "@/hooks/useI18n"
   import { useRouter } from "vue-router"
   const { userInfo } = useAppStore()
+  const { t } = useI18n()
   // table元素
   const tableRef = ref()
   // table高度
@@ -154,7 +174,9 @@
         userInfoMap.set(user.id, user)
       })
       newVal.forEach((item) => {
-        item.userName = userInfoMap.get(item.userId)?.username || "未知用户"
+        item.userName =
+          userInfoMap.get(item.userId)?.username ||
+          t("post.message.unknownUser")
       })
     },
     {
@@ -181,7 +203,11 @@
         break
       case "delete":
         openDeleteDialog({
-          content: "确定删除该博文吗？",
+          title: t("post.dialog.deleteTitle"),
+          content: t("post.message.deleteConfirm"),
+          confirmText: t("common.confirm"),
+          cancelText: t("common.cancel"),
+          successMessage: t("post.message.deleteSuccess"),
           onDelete: async () => {
             await deletePost(data.id)
           },

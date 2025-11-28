@@ -71,6 +71,7 @@ interface DeleteDialogOptions {
   title?: string
   confirmText?: string
   cancelText?: string
+  successMessage?: string
 }
 const openDeleteDialog = (options: DeleteDialogOptions) => {
   const {
@@ -79,7 +80,8 @@ const openDeleteDialog = (options: DeleteDialogOptions) => {
     onSuccess,
     title = "确认删除",
     confirmText = "确认",
-    cancelText = "取消"
+    cancelText = "取消",
+    successMessage
   } = options
   const contentNode = h(
     "div",
@@ -115,19 +117,21 @@ const openDeleteDialog = (options: DeleteDialogOptions) => {
             ),
             h(
               ElButton,
-              {
-                type: "primary",
-                onClick: async () => {
-                  try {
-                    await onDelete()
-                    unMounted()
-                    onSuccess?.()
-                    ElMessage.success("删除成功")
-                  } catch (error) {
-                    console.error(error)
-                  }
+            {
+              type: "primary",
+              onClick: async () => {
+                try {
+                  await onDelete()
+                  unMounted()
+                  onSuccess?.()
+                    if (successMessage) {
+                      ElMessage.success(successMessage)
+                    }
+                } catch (error) {
+                  console.error(error)
                 }
-              },
+              }
+            },
               () => confirmText
             )
           ]

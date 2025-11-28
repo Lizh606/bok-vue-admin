@@ -6,7 +6,7 @@
         <span
           class="tw-text-2xl tw-font-bold tw-text-primary"
           v-show="!isCollapse"
-          >运维管理</span
+          >{{ t("menu.title") }}</span
         >
       </div>
     </div>
@@ -24,7 +24,7 @@
         <el-icon>
           <component :is="item.icon" />
         </el-icon>
-        <span>{{ item.name }}</span>
+        <span>{{ t(item.nameKey) }}</span>
       </el-menu-item>
     </el-menu>
 
@@ -37,7 +37,7 @@
           class="tw-h-full tw-w-full tw-object-cover"
         />
       </div>
-      <span v-show="!isCollapse">Welcome back 😇</span>
+      <span v-show="!isCollapse">{{ t("menu.welcomeBack") }}</span>
     </div>
   </div>
 </template>
@@ -47,24 +47,26 @@
   import { Document, Histogram, Setting, User } from "@element-plus/icons-vue"
   import { computed } from "vue"
   import { useRoute } from "vue-router"
+  import { useI18n } from "@/hooks/useI18n"
   const route = useRoute()
+  const { t } = useI18n()
   const isCollapse = defineModel<boolean>("isCollapse", {
     required: true,
     default: false
   })
   const menuList = [
     {
-      name: "仪表盘",
+      nameKey: "menu.items.dashboard",
       value: "dashboard",
       icon: Histogram
     },
     {
-      name: "博文管理",
+      nameKey: "menu.items.article",
       value: "article",
       icon: Document
     },
     {
-      name: "用户管理",
+      nameKey: "menu.items.user",
       value: "user",
       icon: User
     }

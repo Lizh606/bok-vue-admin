@@ -2,14 +2,16 @@
   <div class="tw-flex tw-flex-col tw-gap-6">
     <!-- 标题栏 -->
     <div class="tw-flex tw-items-center">
-      <div class="tw-text-light tw-text-2xl tw-font-bold">仪表盘</div>
+      <div class="tw-text-light tw-text-2xl tw-font-bold">
+        {{ t("dashboard.title") }}
+      </div>
     </div>
 
     <!-- 统计卡片区域 -->
     <div class="tw-grid tw-grid-cols-4 tw-gap-6">
       <el-card
         v-for="stat in statistics"
-        :key="stat.title"
+        :key="stat.titleKey"
         shadow="always"
         class="tw-relative tw-overflow-hidden tw-rounded-xl"
       >
@@ -20,7 +22,9 @@
             </el-icon>
           </div>
           <div>
-            <div class="tw-text-base tw-text-sm">{{ stat.title }}</div>
+            <div class="tw-text-base tw-text-sm">
+              {{ t(stat.titleKey) }}
+            </div>
             <div class="tw-mt-1 tw-text-2xl tw-text-base tw-font-bold">
               {{ stat.value }}
             </div>
@@ -40,14 +44,18 @@
           <el-card shadow="always" class="tw-flex tw-flex-col">
             <template #header>
               <div class="tw-flex tw-items-center tw-justify-between">
-                <span class="tw-font-medium">文章分类</span>
+                <span class="tw-font-medium">
+                  {{ t("dashboard.charts.categories") }}
+                </span>
               </div>
             </template>
             <div class="tw-h-full" ref="categoryChartRef"></div>
           </el-card>
           <el-card shadow="always" class="tw-flex tw-flex-col">
             <template #header>
-              <div class="tw-font-medium">最新评论</div>
+              <div class="tw-font-medium">
+                {{ t("dashboard.charts.recentComments") }}
+              </div>
             </template>
             <CommentList :comments="discussions" :loading="loading" />
           </el-card>
@@ -63,16 +71,18 @@
   import { getPostStatistics } from "@/services/posts"
   import { useThemeStore } from "@/stores/theme"
   import { Comment, Document, Star, View } from "@element-plus/icons-vue"
+  import { useI18n } from "@/hooks/useI18n"
   import * as echarts from "echarts"
   import { storeToRefs } from "pinia"
   import { onMounted, ref, watch } from "vue"
 
   const categoryChartRef = ref()
+  const { t } = useI18n()
 
   // 统计数据
   const statistics = ref([
     {
-      title: "文章总数",
+      titleKey: "dashboard.statistics.posts",
       value: 0,
       icon: Document,
       iconColor: "tw-text-blue-500 dark:tw-text-blue-400",
@@ -81,7 +91,7 @@
         "tw-bg-white dark:tw-bg-[#2a3b57] tw-shadow-lg tw-shadow-blue-500/5 dark:tw-shadow-blue-400/5 tw-border tw-border-blue-100/50 dark:tw-border-blue-500/10 tw-backdrop-blur-sm"
     },
     {
-      title: "总阅读量",
+      titleKey: "dashboard.statistics.views",
       value: "0k",
       icon: View,
       iconColor: "tw-text-emerald-500 dark:tw-text-emerald-400",
@@ -90,14 +100,14 @@
         "tw-bg-white dark:tw-bg-[#2a3b57] tw-shadow-lg tw-shadow-emerald-500/5 dark:tw-shadow-emerald-400/5 tw-border tw-border-emerald-100/50 dark:tw-border-emerald-500/10 tw-backdrop-blur-sm"
     },
     {
-      title: "评论数",
+      titleKey: "dashboard.statistics.comments",
       value: 0,
       icon: Comment,
       iconColor: "tw-text-amber-500 dark:tw-text-amber-400",
       iconBg: "tw-bg-amber-500/10 dark:tw-bg-amber-400/10"
     },
     {
-      title: "收藏数",
+      titleKey: "dashboard.statistics.favorites",
       value: 0,
       icon: Star,
       iconColor: "tw-text-violet-500 dark:tw-text-violet-400",
@@ -125,7 +135,7 @@
       },
       series: [
         {
-          name: "文章分类",
+          name: t("dashboard.seriesName"),
           type: "pie",
           radius: ["40%", "70%"], // 改成环形图
           center: ["50%", "45%"],
@@ -135,11 +145,14 @@
             borderColor: "#fff",
             borderWidth: 1
           },
-          label: {
-            show: true,
-            position: "outside",
-            formatter: "{b}\n{c}篇"
-          },
+            label: {
+              show: true,
+              position: "outside",
+              formatter: (params: { name: string; value: number }) => {
+                const unit = t("dashboard.chart.postUnit")
+                return `${params.name}\n${params.value} ${unit}`
+              }
+            },
           labelLine: {
             length: 15,
             length2: 0,

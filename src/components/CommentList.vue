@@ -2,7 +2,7 @@
   <div class="tw-h-full tw-space-y-4 tw-overflow-auto">
     <el-empty
       v-if="!loading && (!comments || comments.length === 0)"
-      description="暂无评论"
+      :description="t('comment.empty')"
     />
     <el-skeleton v-else-if="loading" :rows="3" animated />
     <template v-else>
@@ -29,7 +29,7 @@
             {{ comment.body }}
           </div>
           <div class="tw-mt-1 tw-text-base tw-text-sm">
-            来自:
+            {{ t("comment.from") }}
             <a
               :href="comment.discussionUrl"
               target="_blank"
@@ -50,6 +50,9 @@
 
 <script setup lang="ts">
   import { formatDate } from "@/utils/date"
+  import { useI18n } from "@/hooks/useI18n"
+
+  const { t } = useI18n()
 
   defineProps<{
     comments: any[]

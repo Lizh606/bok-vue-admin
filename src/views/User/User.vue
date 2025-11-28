@@ -1,9 +1,12 @@
 <template>
   <div class="tw-flex tw-flex-col tw-gap-4 tw-bg-base">
     <div class="tw-flex tw-items-center tw-justify-between">
-      <div class="tw-text-2xl tw-font-bold tw-text-light">用户管理</div>
+      <div class="tw-text-2xl tw-font-bold tw-text-light">
+        {{ t("user.title") }}
+      </div>
       <el-button type="primary" @click="openUserDialog('add')" v-if="isAdmin">
-        <el-icon class="tw-mr-1"><Plus /></el-icon>新增用户
+        <el-icon class="tw-mr-1"><Plus /></el-icon>
+        {{ t("user.button.add") }}
       </el-button>
     </div>
 
@@ -18,10 +21,12 @@
           <template #title>
             <div class="tw-flex tw-items-center tw-gap-2">
               <el-icon><Warning /></el-icon>
-              <span>访客提示</span>
+              <span>{{ t("user.alert.title") }}</span>
             </div>
           </template>
-          <div class="tw-mt-2">当前为游客访问模式，暂无编辑权限。</div>
+          <div class="tw-mt-2">
+            {{ t("user.alert.content") }}
+          </div>
         </el-alert>
       </div>
       <div class="tw-min-h-0 tw-flex-1" ref="tableRef">
@@ -31,8 +36,17 @@
           :height="tableHeight"
           style="width: 100%"
         >
-          <el-table-column prop="id" label="ID" width="80" align="center" />
-          <el-table-column width="80" align="center" label="头像">
+          <el-table-column
+            prop="id"
+            :label="t('user.table.id')"
+            width="80"
+            align="center"
+          />
+          <el-table-column
+            width="80"
+            align="center"
+            :label="t('user.table.avatar')"
+          >
             <template #default="scope">
               <div
                 class="tw-flex tw-h-full tw-w-full tw-items-center tw-justify-center"
@@ -55,7 +69,9 @@
                         <el-icon class="tw-mb-1 tw-text-xl"
                           ><Picture
                         /></el-icon>
-                        <span class="tw-text-xs">加载失败</span>
+                        <span class="tw-text-xs">
+                          {{ t("userForm.message.imageLoadFailed") }}
+                        </span>
                       </div>
                     </template>
                   </el-image>
@@ -65,17 +81,21 @@
           </el-table-column>
           <el-table-column
             prop="username"
-            label="用户名"
+            :label="t('user.table.username')"
             width="150"
             align="center"
           />
           <el-table-column
             prop="loginName"
-            label="昵称"
+            :label="t('user.table.nickname')"
             width="150"
             align="center"
           />
-          <el-table-column label="角色" width="250" align="center">
+          <el-table-column
+            :label="t('user.table.role')"
+            width="250"
+            align="center"
+          >
             <template #default="scope">
               <el-tag
                 v-for="role in scope.row.roles"
@@ -87,7 +107,11 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="状态" width="100" align="center">
+          <el-table-column
+            :label="t('user.table.status')"
+            width="100"
+            align="center"
+          >
             <template #default="scope">
               <el-switch
                 v-model="scope.row.status"
@@ -100,19 +124,19 @@
           </el-table-column>
           <el-table-column
             prop="lastLoginTime"
-            label="最后登录时间"
+            :label="t('user.table.lastLogin')"
             width="180"
             align="center"
           />
           <el-table-column
             prop="createTime"
-            label="创建时间"
+            :label="t('user.table.createdAt')"
             width="180"
             align="center"
           />
 
           <el-table-column
-            label="操作"
+            :label="t('user.table.actions')"
             fixed="right"
             align="center"
             v-if="isAdmin"
@@ -123,13 +147,13 @@
                 type="primary"
                 class="tw-mr-2"
               >
-                编辑
+                {{ t("user.operations.edit") }}
               </el-link>
               <el-link
                 @click="openUserDialog('delete', scope.row)"
                 type="danger"
               >
-                删除
+                {{ t("user.operations.delete") }}
               </el-link>
             </template>
           </el-table-column>
@@ -169,8 +193,10 @@
   import { ElButton, ElMessage } from "element-plus"
   import { computed, h, onBeforeUnmount, onMounted, ref, type Ref } from "vue"
   import { USER_DIALOG_TITLE } from "./common"
+  import { useI18n } from "@/hooks/useI18n"
 
   const { userInfo } = useAppStore()
+  const { t } = useI18n()
   // table元素
   const tableRef = ref()
   // table高度
@@ -200,6 +226,7 @@
   })
 
   const dialogTitle = ref(USER_DIALOG_TITLE.ADD)
+  const dialogTitleLabel = computed(() => t(dialogTitle.value))
   const currentFormData = ref()
   const isSubmitting = ref(false)
 
@@ -215,12 +242,15 @@
         break
       case "delete":
         openDeleteDialog({
-          content: "确定删除该用户吗？",
+          title: t("user.dialog.deleteTitle"),
+          content: t("user.dialog.deleteContent"),
+          confirmText: t("common.confirm"),
+          cancelText: t("common.cancel"),
+          successMessage: t("user.message.deleteSuccess"),
           onDelete: async () => {
             await deleteUser(data.id)
           },
           onSuccess: () => {
-            ElMessage.success("删除成功")
             getTableData()
           }
         })
@@ -233,11 +263,15 @@
         currentFormData: data || currentFormData.value
       },
       {
-        title: dialogTitle.value,
+        title: dialogTitleLabel.value,
         width: 500
       },
       {
         footer: () => {
+          const confirmKey =
+            dialogTitle.value === USER_DIALOG_TITLE.ADD
+              ? "user.dialog.confirmAdd"
+              : "user.dialog.confirmEdit"
           return h(
             "div",
             {
@@ -252,7 +286,7 @@
                     instance.value?.resetForm()
                   }
                 },
-                "取消"
+                () => t("common.cancel")
               ),
               h(
                 ElButton,
@@ -269,9 +303,7 @@
                     }
                   }
                 },
-                dialogTitle.value === USER_DIALOG_TITLE.ADD
-                  ? "确认添加"
-                  : "确认修改"
+                () => t(confirmKey)
               )
             ]
           )
@@ -290,14 +322,16 @@
 
       if (dialogTitle.value === USER_DIALOG_TITLE.ADD) {
         await addUser(formData)
-        ElMessage.success("添加用户成功")
+        ElMessage.success(t("user.message.addSuccess"))
       } else {
         await updateUser(formData.id as number, formData)
-        ElMessage.success("更新用户成功")
+        ElMessage.success(t("user.message.updateSuccess"))
       }
       getTableData()
     } catch (error) {
-      ElMessage.error(error instanceof Error ? error.message : "操作失败")
+      ElMessage.error(
+        error instanceof Error ? error.message : t("user.message.operationFail")
+      )
       throw error
     } finally {
       isSubmitting.value = false
@@ -308,9 +342,9 @@
   const handleStatusChange = async (row: User) => {
     try {
       await changeUserStatus(row.id as number)
-      ElMessage.success("更新状态成功")
+      ElMessage.success(t("user.message.statusSuccess"))
     } catch (error) {
-      ElMessage.error("更新状态失败")
+      ElMessage.error(t("user.message.statusFail"))
       // 恢复原状态
       row.status = row.status === 1 ? 0 : 1
     }

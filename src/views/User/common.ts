@@ -1,5 +1,5 @@
 export const enum USER_DIALOG_TITLE {
-  ADD = '新建用户',
-  EDIT = '编辑用户',
-  DELETE = '删除用户'
+  ADD = "user.dialog.add",
+  EDIT = "user.dialog.edit",
+  DELETE = "user.dialog.deleteTitle"
 }

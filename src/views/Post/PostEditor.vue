@@ -5,17 +5,20 @@
   >
     <div class="tw-flex tw-items-center tw-justify-between">
       <div class="tw-font-serif tw-text-2xl tw-text-light">
-        {{ isEdit ? "编辑文章" : "写文章" }}
+        {{ isEdit ? t("postEditor.title.edit") : t("postEditor.title.create") }}
       </div>
       <div class="tw-flex tw-gap-3">
-        <el-button @click="$router.back()">返回</el-button>
+        <el-button @click="$router.back()">
+          {{ t("postEditor.buttons.back") }}
+        </el-button>
         <el-button
           class="tw-border-none tw-bg-primary tw-font-bold hover:tw-bg-primary-alpha10"
           @click="handleSubmit"
           type="primary"
           v-if="isAdmin"
         >
-          <el-icon class="tw-mr-1"><DocumentAdd /></el-icon>发布
+          <el-icon class="tw-mr-1"><DocumentAdd /></el-icon>
+          {{ t("postEditor.buttons.publish") }}
         </el-button>
       </div>
     </div>
@@ -30,20 +33,24 @@
         :rules="rules"
         label-position="top"
       >
-        <el-form-item label="文章标题" prop="title">
+        <el-form-item :label="t('postEditor.form.title.label')" prop="title">
           <el-input
             v-model="formData.title"
-            placeholder="请输入文章标题"
+            :placeholder="t('postEditor.form.title.placeholder')"
             maxlength="100"
             show-word-limit
           />
         </el-form-item>
 
         <div class="tw-flex tw-gap-6">
-          <el-form-item label="文章分类" prop="category" class="tw-flex-1">
+          <el-form-item
+            :label="t('postEditor.form.category.label')"
+            prop="category"
+            class="tw-flex-1"
+          >
             <el-select
               v-model="formData.category"
-              placeholder="请选择或输入文章分类"
+              :placeholder="t('postEditor.form.category.placeholder')"
               class="tw-w-full"
               filterable
               allow-create
@@ -58,11 +65,15 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="发布日期" prop="date" class="tw-flex-1">
+          <el-form-item
+            :label="t('postEditor.form.date.label')"
+            prop="date"
+            class="tw-flex-1"
+          >
             <el-date-picker
               v-model="formData.date"
               type="datetime"
-              placeholder="选择发布日期"
+              :placeholder="t('postEditor.form.date.placeholder')"
               class="tw-w-full"
               value-format="YYYY-MM-DD HH:mm:ss"
             />
@@ -70,11 +81,15 @@
         </div>
 
         <div class="tw-flex tw-gap-6">
-          <el-form-item label="文章标签" prop="tags" class="tw-flex-1">
+          <el-form-item
+            :label="t('postEditor.form.tags.label')"
+            prop="tags"
+            class="tw-flex-1"
+          >
             <el-select
               v-model="formData.tags"
               multiple
-              placeholder="请选择或输入文章标签"
+              :placeholder="t('postEditor.form.tags.placeholder')"
               class="tw-w-full"
               filterable
               allow-create
@@ -89,19 +104,23 @@
             </el-select>
           </el-form-item>
 
-          <el-form-item label="文章描述" prop="description" class="tw-flex-1">
-            <el-input
-              v-model="formData.description"
-              type="textarea"
-              :rows="1"
-              placeholder="请输入文章描述"
+        <el-form-item
+          :label="t('postEditor.form.description.label')"
+          prop="description"
+          class="tw-flex-1"
+        >
+          <el-input
+            v-model="formData.description"
+            type="textarea"
+            :rows="1"
+            :placeholder="t('postEditor.form.description.placeholder')"
               maxlength="200"
               show-word-limit
             />
           </el-form-item>
         </div>
 
-        <el-form-item label="文章内容" prop="content">
+        <el-form-item :label="t('postEditor.form.content.label')" prop="content">
           <!-- <BlogEditor v-model="formData.content" class="tw-mb-4" /> -->
           <el-input v-model="formData.content" type="textarea" :rows="15" />
         </el-form-item>
@@ -118,9 +137,11 @@
   import type { FormInstance, FormRules } from "element-plus"
   import { ElMessage } from "element-plus"
   import { computed, onMounted, reactive, ref } from "vue"
+  import { useI18n } from "@/hooks/useI18n"
   import { useRoute, useRouter } from "vue-router"
   const router = useRouter()
   const route = useRoute()
+  const { t } = useI18n()
   const formRef = ref<FormInstance>()
   const isEdit = ref(false)
   const isAdmin = computed(() => {
@@ -141,32 +162,66 @@
 
   const rules = reactive<FormRules>({
     title: [
-      { required: true, message: "请输入文章标题", trigger: "blur" },
+      {
+        required: true,
+        message: t("postEditor.rules.titleRequired"),
+        trigger: "blur"
+      },
       {
         min: 2,
         max: 100,
-        message: "标题长度在 2 到 100 个字符",
+        message: t("postEditor.rules.titleLength"),
         trigger: "blur"
       }
     ],
     category: [
-      { required: true, message: "请选择文章分类", trigger: "change" }
+      {
+        required: true,
+        message: t("postEditor.rules.category"),
+        trigger: "change"
+      }
     ],
-    tags: [{ required: true, message: "请选择文章标签", trigger: "change" }],
-    content: [{ required: true, message: "请输入文章内容", trigger: "blur" }],
-    date: [{ required: true, message: "请选择发布日期", trigger: "change" }],
+    tags: [
+      {
+        required: true,
+        message: t("postEditor.rules.tags"),
+        trigger: "change"
+      }
+    ],
+    content: [
+      {
+        required: true,
+        message: t("postEditor.rules.content"),
+        trigger: "blur"
+      }
+    ],
+    date: [
+      {
+        required: true,
+        message: t("postEditor.rules.date"),
+        trigger: "change"
+      }
+    ],
     description: [
-      { required: true, message: "请输入文章描述", trigger: "blur" },
-      { max: 200, message: "描述最多200个字符", trigger: "blur" }
+      {
+        required: true,
+        message: t("postEditor.rules.description"),
+        trigger: "blur"
+      },
+      {
+        max: 200,
+        message: t("postEditor.rules.descriptionMax"),
+        trigger: "blur"
+      }
     ]
   })
 
   // 模拟分类和标签数据，实际应该从API获取
-  const categoryOptions = [
-    { value: "frontend", label: "前端开发" },
-    { value: "backend", label: "后端开发" },
-    { value: "devops", label: "DevOps" }
-  ]
+  const categoryOptions = computed(() => [
+    { value: "frontend", label: t("postEditor.options.categories.frontend") },
+    { value: "backend", label: t("postEditor.options.categories.backend") },
+    { value: "devops", label: t("postEditor.options.categories.devops") }
+  ])
 
   const tagOptions = [
     { value: "vue", label: "Vue" },
@@ -192,7 +247,7 @@
           date: detail.date
         })
       } catch (error) {
-        ElMessage.error("获取文章详情失败")
+      ElMessage.error(t("postEditor.message.fetchDetailFailed"))
         router.push({ name: "list" })
       }
     }
@@ -231,10 +286,14 @@
         await addPost(postData, containerRef.value)
       }
 
-      ElMessage.success(isEdit.value ? "文章更新成功" : "文章发布成功")
+      ElMessage.success(
+        isEdit.value
+          ? t("postEditor.message.updateSuccess")
+          : t("postEditor.message.publishSuccess")
+      )
       router.push("/article")
     } catch (error) {
-      ElMessage.error("操作失败")
+      ElMessage.error(t("postEditor.message.operationFailed"))
     }
   }
 </script>

@@ -21,14 +21,14 @@
           :key="breadCrumbItem.path"
           :to="breadCrumbItem.path"
         >
-          {{ breadCrumbItem.meta.title }}
+          {{ getBreadCrumbTitle(breadCrumbItem.meta.title) }}
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <div class="tw-flex tw-items-center tw-gap-6">
       <el-button type="success" size="small" @click="createPost">
         <el-icon><EditPen /></el-icon>
-        写文章
+        {{ t("header.actions.createPost") }}
       </el-button>
 
       <el-dropdown @command="handleThemeChange">
@@ -38,31 +38,70 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="light" :icon="Sunny">
-              亮色模式
+              {{ t("header.theme.light") }}
             </el-dropdown-item>
             <el-dropdown-item command="dark" :icon="Moon">
-              暗色模式
+              {{ t("header.theme.dark") }}
             </el-dropdown-item>
             <el-dropdown-item command="system" :icon="Monitor">
-              跟随系统
+              {{ t("header.theme.system") }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
 
-      <el-tooltip content="站点统计" placement="bottom">
+      <el-tooltip :content="t('header.tooltips.siteStats')" placement="bottom">
         <el-icon size="20" class="tw-cursor-pointer"><TrendCharts /></el-icon>
       </el-tooltip>
 
-      <el-tooltip content="评论管理" placement="bottom">
+      <el-tooltip
+        :content="t('header.tooltips.commentManagement')"
+        placement="bottom"
+      >
         <el-icon size="20" class="tw-cursor-pointer"><ChatDotRound /></el-icon>
       </el-tooltip>
 
-      <el-tooltip content="访问网站" placement="bottom">
+      <el-tooltip
+        :content="t('header.tooltips.visitWebsite')"
+        placement="bottom"
+      >
         <el-icon size="20" class="tw-cursor-pointer" @click="goToWebsite"
           ><Link
         /></el-icon>
       </el-tooltip>
+      <div class="language-dropdown">
+        <el-dropdown
+          @command="handleLanguageSelect"
+          trigger="click"
+          placement="bottom-end"
+        >
+          <span class="language-dropdown__toggle">
+            <img
+              src="@/assets/translate.svg"
+              alt="translate"
+              class="language-dropdown__icon"
+            />
+            <!-- <span class="language-dropdown__label">
+              {{ t("header.languageLabel") }}
+            </span> -->
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu class="language-dropdown__menu">
+              <el-dropdown-item
+                v-for="option in languageOptions"
+                :key="option.value"
+                :command="option.value"
+                :class="[
+                  'language-dropdown__item',
+                  { 'is-active': option.value === locale }
+                ]"
+              >
+                <span class="language-dropdown__text">{{ option.label }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
 
       <el-dropdown>
         <div class="tw-flex tw-cursor-pointer tw-items-center tw-gap-2">
@@ -76,8 +115,12 @@
         </div>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>个人设置</el-dropdown-item>
-            <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+            <el-dropdown-item>{{
+              t("header.dropdown.profile")
+            }}</el-dropdown-item>
+            <el-dropdown-item @click="logout">
+              {{ t("header.dropdown.logout") }}
+            </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -86,6 +129,8 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "@/hooks/useI18n"
+  import type { LocaleCode } from "@/locales/messages"
   import { useAppStore } from "@/stores/app"
   import { SupportModeEnum, useThemeStore } from "@/stores/theme"
   import {
@@ -112,6 +157,21 @@
   const breadCrumbList = computed(() => {
     return route.matched.filter((i) => i.meta.title)
   })
+  const { t, locale, setLocale, locales } = useI18n()
+  const getBreadCrumbTitle = (title?: unknown) => {
+    const titleText = typeof title === "string" ? title : undefined
+    if (!titleText) return ""
+    return t(titleText, titleText)
+  }
+  const languageOptions = computed(() => {
+    return locales.map((lang) => ({
+      value: lang,
+      label: t(`localeNames.${lang}`)
+    }))
+  })
+  const handleLanguageSelect = (value: LocaleCode) => {
+    setLocale(value)
+  }
   const appStore = useAppStore()
   const userName = computed(() => {
     return appStore.userInfo.username
@@ -156,4 +216,40 @@
   }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+  .language-dropdown {
+    @apply tw-flex tw-items-center tw-gap-2;
+
+    &__toggle {
+      @apply tw-flex tw-cursor-pointer tw-items-center tw-gap-1 tw-text-xs tw-font-medium tw-uppercase;
+    }
+
+    &__label {
+      @apply tw-block tw-text-xs tw-font-medium;
+    }
+
+    &__icon {
+      @apply tw-h-4 tw-w-4;
+    }
+
+    &__menu {
+      @apply tw-rounded-lg tw-border tw-border-solid tw-border-base tw-shadow-lg;
+    }
+
+    &__item {
+      @apply tw-flex tw-items-center tw-justify-between tw-gap-2;
+    }
+
+    &__item.is-active {
+      @apply tw-border-l-2 tw-border-primary tw-bg-slate-50  tw-font-semibold tw-text-primary;
+    }
+
+    &__text {
+      @apply tw-text-sm;
+    }
+
+    &__arrow {
+      @apply tw-text-sm;
+    }
+  }
+</style>

@@ -1,6 +1,7 @@
 import type { User } from "@/services/user"
 import { defineStore } from "pinia"
 import { ref } from "vue"
+import { DEFAULT_LOCALE, type LocaleCode } from "@/locales/messages"
 type UserInfo = Pick<User, "username" | "roles" | "profile" | "loginName">
 export const useAppStore = defineStore(
   "app",
@@ -14,7 +15,8 @@ export const useAppStore = defineStore(
         avatar: ""
       }
     })
-    return { token, userInfo }
+    const language = ref<LocaleCode>(DEFAULT_LOCALE)
+    return { token, userInfo, language }
   },
   { persist: true }
 )
